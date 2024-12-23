@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block title %}
+Главная страница
+{% endblock %}
+
+{% block script %}
+{% endblock %}
+
+{% block body %}    
+<div class="container pt-4 w-75">    
+    <form class="login_form" method="post" enctype="multipart/form-data">
+        <h1 align="center">Регистрация</h1>
+        <div class="row">   
+            <div class="col">
+                <label for="name" class="form-label">Имя</label>
+                <input name="name" type="text" class="form-control" id="name" placeholder="" value="" required="">
+                <div class="invalid-feedback">
+                Действительное имя обязательно.
+                </div>
+            </div>
+
+            <div class="col">
+                <label for="surname" class="form-label">Фамилия</label>
+                <input name="surname" type="text" class="form-control" id="surname" placeholder="" value="" required="">
+                <div class="invalid-feedback">
+                Действительная фамилия обязательна.
+                </div>
+            </div>
+
+            <div class="col">
+                <label for="patronymic" class="form-label">Отчество</label>
+                <input name="patronymic" type="text" class="form-control" id="patronymic" placeholder="" value="" required="">
+                <div class="invalid-feedback">
+                Действительное отчество обязательно.
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <label for="login" class="form-label">Логин</label>
+                <input name="login" type="text" class="form-control" id="login" placeholder="Логин" value="" required="">
+                <div class="invalid-feedback">
+                    Логин обязателен.
+                </div>
+            </div>
+
+            <div class="col">
+                <label for="password" class="form-label">Пароль</label>
+                <input name="password" type="password" class="form-control" id="password" placeholder="Пароль" required>
+                <div class="invalid-feedback">
+                    Пароль обязателен.
+                </div>
+            </div>
+            
+            <div class="col">
+                <label for="num_class" class="form-label">Класс обучения</label>
+                <div data-mdb-input-init class="form-outline" style="width: 22rem;">
+                    <input name="num_class" min="1" max="11" type="number" id="num_class" class="form-control" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <label for="email" class="form-label">Эл. адрес <span class="text-muted"></span></label>
+                <input name="email" type="email" class="form-control" id="email" placeholder="you@example.com" required>
+                <div class="invalid-feedback">
+                Пожалуйста, введите действующий адрес электронной почты.
+                </div>
+            </div>
+
+            <div class="col">
+                <label for="country" class="form-label">Страна</label>
+                <select name="country" class="form-select" id="country" required>
+                <option value="">Выберите...</option>
+                <option>Россия</option>
+                <option>США</option>
+                <option>Китай</option>
+                <option>Франция</option>
+                <option>Индия</option>
+                <option>Япония</option>
+                <option>ЮАР</option>
+                </select>
+                <div class="invalid-feedback">
+                Пожалуйста, выберите действующую страну.
+                </div>
+            </div>
+
+            <div class="col">
+                <label for="region" class="form-label">Область</label>
+                <select name="region" class="form-select" id="region" required="">
+                <option value="">Выберите...</option>
+                <option>Брянская область</option>
+                <option>Московская область</option>
+                <option>Припять</option>
+                </select>
+                <div class="invalid-feedback">
+                Пожалуйста, выберите действующую область.
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label for="howOld">Как вы узнали о нашем сервисе?</label>
+                    <textarea name="howOld" class="form-control" id="howOld" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label for="whyAreWe">Какие предметы планируете сдавать?</label>
+                    <textarea name="whyAreWe" class="form-control" id="whyAreWe" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="col">
+                <fieldset class="form-group">
+                    <label for="state" class="form-label">Ваш пол</label>
+                    <div class="form-check">
+                    <label class="form-check-label">
+                        <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios1" value="option1" checked="">
+                        Мужской
+                    </label>
+                    </div>
+                    <div class="form-check">
+                    <label class="form-check-label">
+                        <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios2" value="option2">
+                        Женский
+                    </label>
+                    </div>
+                    <div class="form-check">
+                    <label class="form-check-label">
+                        <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios3" value="option3">
+                        Ламинат
+                    </label>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    
+    <div class="row pt-3">
+        <fieldset class="form-group">
+            <div class="form-check">
+            <label class="form-check-label">
+                <input class="form-check-input" type="checkbox" value="" required>
+                Я согласен с обработкой персональных данных
+            </label>
+            </div>
+        </fieldset>
+        <div> 
+            <label for="avatar">Установите аватар на сайте</label>
+            <input type="file" id="avatar" name="avatar" class="form-control" style="width: 26%;">
+        </div>
+    </div>  
+    <div class="container p-4" align="center">
+        <input type="submit" name="update" id="update" class="btn btn-lg btn-dark" value="Зарегистрироваться">
+    </div>
+</form>
+</div>
+{% endblock %}

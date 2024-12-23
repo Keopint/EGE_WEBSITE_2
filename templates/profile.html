@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}
+Личный кабинет
+{% endblock %}
+
+{% block body %}
+
+<div class="container pt-4 w-75">    
+    <section>
+        <div class="container py-5">
+          <div class="row"> 
+            <div class="col-lg-4">  
+              <div class="card mb-3">
+                <div class="card-body text-center">
+                  <img src="/static/img/avatars/{{user.avatar}}" alt="avatar" style="width: 80%;">
+                  <h4 class="my-3">{{user.login}}</h4>
+                  <div class="d-flex justify-content-center mb-2">  
+                    <a type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-secondary">Редактировать</a>
+                  </div>
+                  <div class="d-flex justify-content-center mb-2">
+                    <a type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-secondary">Узнать о программе</a>
+                  </div>
+                  <div class="d-flex justify-content-center mb-2">
+                    <a type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-secondary">Поддержка</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-8">
+              <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p class="mb-0">Имя</p>
+                        </div>
+                        <div class="col-sm-9">
+                            <p class="text-muted mb-0">{{user.firstName}}</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p class="mb-0">Фамилия</p>
+                        </div>
+                        <div class="col-sm-9">
+                            <p class="text-muted mb-0">{{user.lastName}}</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p class="mb-0">Отчество</p>
+                        </div>
+                        <div class="col-sm-9">
+                            <p class="text-muted mb-0">{{user.fatherName}}</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p class="mb-0">Логин</p>
+                        </div>
+                        <div class="col-sm-9">  
+                            <p class="text-muted mb-0">{{user.login}}</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3">  
+                            <p class="mb-0">Возраст</p>
+                        </div>
+                        <div class="col-sm-9">
+                            <p class="text-muted mb-0">{{user.year}}</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p class="mb-0">Email</p>
+                        </div>
+                        <div class="col-sm-9">
+                            <p class="text-muted mb-0">{{user.email}}</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p class="mb-0">Местоположение</p>
+                        </div>
+                        <div class="col-sm-9">
+                            <p class="text-muted mb-0">{{user.country}}, {{user.region}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+        </div>
+      </section>
+</div>
+
+{% endblock %}
+

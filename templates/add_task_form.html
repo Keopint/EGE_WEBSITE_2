@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}
+Главная страница
+{% endblock %}
+
+{% block script %}
+{% endblock %}
+
+{% block body %} 
+    <div class="container" style="width: 50%;">
+        <h1 class="text-center pt-2">Добавить задание</h1>
+        <form method="POST" enctype="multipart/form-data">
+            <textarea name="statement" id="statement" class="mt-2" style="width: 100%; height:30vh;" placeholder="Условие задачи" required></textarea>
+            <div class="row mx-auto">
+                <input type="text" name="source" id="source" class="form-control me-2" style="width: 14%;" placeholder="Источник" required/>
+                <input name="number" id="number" placeholder="Номер(КИМ)" min="1" max="27" type="number" id="typeNumber" class="form-control" style="width: 19%;" required/> 
+                <input name="answer" id="answer" class="ms-2" type="number" placeholder="Ответ" style="width: 15%;" required/>
+                <select name="select_difficulty" id="select_difficulty" class="form-select ms-2" aria-label="Default select example" style="width: 18%;" required>
+                    <option selected disabled value="">Cложность</option >
+                    <option value="0">Легкая</option>
+                    <option value="1">Нормальная</option>
+                    <option value="2">Сложная</option>  
+                </select>
+                <input type="file" name="file" id="file" class="form-control ms-2" style="width: 29%"/>
+            </div>
+            <textarea name="solution" id="solution" class="mt-2" style="width: 100%; height:20vh;" placeholder="Решение(если нужно)"></textarea>
+            <div class="text-center">
+                <button type="submit" class="btn btn-outline-dark mt-2" style="width: 30%;">Добавить</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}

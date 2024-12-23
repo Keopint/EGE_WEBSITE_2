@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}
+Главная страница
+{% endblock %}
+
+{% block script %}
+{% endblock %}
+
+{% block body %} 
+<div class="row py-lg-5 text-center">
+  <div class="col-lg-6 col-md-8 mx-auto">
+    <h1 style="font-size: 500%;">СДАМЕГЭ</h1>
+    <p class="lead text-muted" style="font-size: 200%;">На нашем сайте вы можете решать задания егэ и добавлять свои. С нами вы гарантированно сдадите ЕГЭ по информатике!</p>
+    <p>
+      <a href="/tasks" class="btn btn-outline-dark" style="width: 28%;">Решать задания</a>
+      <a href="/add_task_form" class="btn btn-outline-dark" style="width: 28%;">Добавить свое задание</a>
+    </p>
+  </div>
+</div>
+{% endblock %}
+

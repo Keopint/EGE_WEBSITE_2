@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}
+Главная страница
+{% endblock %}
+
+{% block script %}
+{% endblock %}
+
+{% block body %} 
+    <h1 align="center" style="font-size: 500%">Вы джедай или ситх?</h1>
+    <div class="container w-50 pt-4" align="center">  
+        <div class="row">
+            <div class="col">
+                <a class="btn btn-outline-info btn-lg" style="width: 80%;" href="{{url_for('register_student')}}">Ученик</a>
+            </div>
+            <div class="col">
+                <a class="btn btn-outline-danger btn-lg" style="width: 80%;" href="{{url_for('register_teacher')}}">Преподаватель</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
