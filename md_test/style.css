@@ -1,0 +1,27 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    display: block; /* Изменено с flex на block, чтобы элементы отображались один за другим */
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin: 20px auto;
+    border-radius: 10px;
+    max-width: 1200px; /* Ограничиваем ширину контейнера */
+    overflow: auto; /* Добавляем прокрутку, если содержимое не помещается */
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #333;
+    margin-top: 0;
+}
+
+h1 {
+    font-size: 2em;
+    border
+
