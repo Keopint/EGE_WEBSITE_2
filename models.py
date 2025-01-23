@@ -40,6 +40,7 @@ class Student(Base):
     password = Column(String, nullable=False)
     email = Column(String, nullable=False)
     class_number = Column(Integer, nullable=False)
+    avatar = Column(String, nullable=False)
 
 class class_student(Base):
     __tablename__ = 'class_student'

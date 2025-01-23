@@ -31,7 +31,7 @@ def add_task(source: str, statement: str,  number: int, difficulty: int, answer:
         db.close()
 
 
-def add_student(name: str,  surname: str, patronymic: str, class_number: int, email: str, login: str, password: str):
+def add_student(name: str,  surname: str, patronymic: str, class_number: int, email: str, login: str, password: str, avatar: str):
     db = SessionLocal()
     try:
         new_student = Student()
@@ -42,6 +42,7 @@ def add_student(name: str,  surname: str, patronymic: str, class_number: int, em
         new_student.email = email
         new_student.login = login
         new_student.password = password
+        new_student.avatar = avatar
         db.add(new_student)
         db.commit()
     finally:
@@ -51,7 +52,7 @@ def authorize(email: str, password: str):
     db = SessionLocal()
     q = db.query(Student).filter(Student.email == email).first()
     if q:
-        if q.password == sha256(password.encode(encoding = 'UTF-8', errors = 'strict')).hexdigest():
+        if q.password == password:
             return True
     return False
 
@@ -73,11 +74,22 @@ def add_task_form():
         answer = int(request.form["answer"])
         solution = request.form["solution"]
         f = request.files['file']
-        if len(f.filename) != 0:
-            f.save(f"static/img/{f.filename}")
-        add_task(source, statement, number, difficulty, answer, f.filename, solution)
+        filename = f.filename
+        if len(filename) != 0:
+            f.save(f"static/img/{filename}")
+        add_task(source, statement, number, difficulty, answer, filename, solution)
         return render_template("success_add.html")
     return render_template("add_task_form.html")
+
+def get_student_by_email(email):
+    db = SessionLocal()
+    q = db.query(Student).filter(Student.email == email).first()
+    return q
+
+def get_student_by_id(id):
+    db = SessionLocal()
+    q = db.query(Student).get(id)
+    return q
 
 @app.route('/')
 def main_page():
@@ -116,7 +128,7 @@ def register_choice():
 @app.route("/register_teacher", methods=['GET', 'POST'])
 def register_teacher():
     if request.method == "POST":
-        return redirect(url_for("home"))
+        return redirect(url_for("main_page"))
     return render_template("register_teacher.html")
 
 
@@ -129,9 +141,15 @@ def register_student():
         class_number = int(request.form["num_class"])
         email = request.form["email"]
         login = request.form["login"]
-        password = sha256(request.form["password"].encode(encoding = 'UTF-8', errors = 'strict')).hexdigest()
-        add_student(name, surname, patronymic, class_number, email, login, password)
-        return redirect(url_for("home"))
+        password = request.form["password"]
+        avatar = request.files["avatar"]
+        filename = avatar.filename
+        if len(filename) != 0:
+            avatar.save(f"static/img/avatars/{filename}")
+        else:
+            filename = "base_avatar.png"
+        add_student(name, surname, patronymic, class_number, email, login, password, filename)
+        return redirect(url_for("main_page"))
     return render_template("register_student.html")
 
 @app.route("/login_form", methods=['GET', 'POST'])
@@ -141,13 +159,15 @@ def login_form():
         email = request.form["email"]
         password = request.form["password"]
         if authorize(email, password):
-            return redirect(url_for("home"))
+            q = get_student_by_email(email)
+            return redirect(url_for("profile", id=q.id))
         return render_template("login_form.html", msg="Неправильный логин или пароль")
     return render_template("login_form.html", msg=msg)
 
-@app.route("/profile", methods=['GET', 'POST'])
-def profile():
-    return render_template("profile.html")
+@app.route("/profile/<id>", methods=['GET', 'POST'])
+def profile(id):
+    user = get_student_by_id(id)
+    return render_template("profile.html", user=user)
 
 
 if __name__ == "__main__":
