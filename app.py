@@ -11,6 +11,8 @@ from fileinput import filename
 from hashlib import sha256
 from create_app import app
 from create_db import create_database_if_not_exists
+from random import choices
+from string import ascii_letters
 
 
 @login_manager.user_loader
@@ -67,6 +69,12 @@ def add_student(name: str,  surname: str, patronymic: str, class_number: int, em
     finally:
         db.close()
 
+def renamed_file(filename):
+    expansion = filename[filename.rfind("."):]
+    newname = choices(ascii_letters, k=12)
+    return newname + expansion
+
+
 def authorize(email: str, password: str):
     db = SessionLocal()
     q = db.query(Student).filter(Student.email == email).first()
@@ -93,7 +101,7 @@ def add_task_form():
         answer = int(request.form["answer"])
         solution = request.form["solution"]
         f = request.files['file']
-        filename = f.filename
+        filename = renamed_file(f.filename)
         if len(filename) != 0:
             f.save(f"static/img/{filename}")
         add_task(source, statement, number, difficulty, answer, filename, solution)
@@ -194,7 +202,7 @@ def register_student():
         login = request.form["login"]
         password = request.form["password"]
         avatar = request.files["avatar"]
-        filename = avatar.filename
+        filename = renamed_file(avatar.filename)
         if len(filename) != 0:
             avatar.save(f"static/img/avatars/{filename}")
         else:
@@ -238,7 +246,7 @@ def add_post():
         name = request.form['name']
         text = request.form['text']
         image = request.files['file']
-        filename = image.filename
+        filename = renamed_file(image.filename)
         if len(image.filename) != 0:
             image.save(f"static/img/posts_img/{image.filename}")
         else:
@@ -260,7 +268,7 @@ def post_update(id):
             name = request.form['name']
             text = request.form['text']
             image = request.files['file']
-            filename = image.filename
+            filename = renamed_file(image.filename)
             if len(image.filename) != 0:
                 image.save(f"static/img/{image.filename}")
             else:
