@@ -6,7 +6,7 @@ import os
 from sqlalchemy import and_, select, asc, desc
 from sqlalchemy.orm import Session
 from database import SessionLocal
-from models import Student, Task, Post, login_manager
+from models import Student, Task, login_manager, Submit, Post
 from datetime import datetime
 from io import BytesIO
 from fileinput import filename
@@ -241,62 +241,8 @@ def profile(id=None):
         user = get_student_by_id(id)
     return render_template("profile.html", user=user)
 
-@app.route("/add_post", methods=['POST', 'GET'])
-def add_post():
-    name = ""
-    text = ""
-    if request.method == "POST":
-        name = request.form['name']
-        text = markdown_to_html(request.form['text'])
-        image = request.files['file']
-        filename = renamed_file(image.filename)
-        if len(image.filename) != 0:
-            image.save(f"static/img/posts_img/{image.filename}")
-        else:
-            filename = "book.jpg"
-
-        add_post_to_table(name, text, filename)
-        return redirect(url_for('main_page'))
-            
-
-    return render_template("add_post.html")
-
-@app.route("/posts/<int:id>/update", methods=['GET', 'POST'])
-def post_update(id):
-    table = get_post_by_id(id)
-    is_generate = False
-    answer_dialog = ""
-    if request.method == "POST":
-        if "post_scenary" in request.form:
-            name = request.form['name']
-            text = markdown_to_html(request.form['text'])
-            image = request.files['file']
-            filename = renamed_file(image.filename)
-            if len(image.filename) != 0:
-                image.save(f"static/img/{image.filename}")
-            else:
-                filename = "book.jpg"
-
-            try:
-                add_post(name, text, filename)
-                return redirect(url_for('main_page'))
-            except:
-                return "ОШИБКА ВЫПОЛНЕНИЯ ПРОГРАММЫ"
-
-    return render_template("post_update.html")
-
-@app.route("/posts")
-def posts():
-    tables = get_posts()
-    return render_template("posts.html", tables=tables)
-
-@app.route("/posts/<int:id>")
-def post_detail(id):
-    table: Post = get_post_by_id(id)
-    text = render_template_string(table.text)
-    return render_template("post.html", text=text)
 
 if __name__ == "__main__":
     app.jinja_env.auto_reload = True
     app.config['TEMPLATES_AUTO_RELOAD'] = True
-    app.run(port=8080, host="127.0.0.2", debug=True)
+    app.run(port=8080, host="127.0.0.2", debug=True)   
