@@ -49,6 +49,14 @@ class class_test(Base):
     class_id = Column(Integer, nullable=False)
     test_id = Column(Integer, nullable=False)
 
+class Comment(Base):
+    __tablename__ = 'Comment'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer)
+    text = Column(Text, nullable=False)
+    data = Column(DateTime, default=datetime.utcnow)
+
 
 class Student(UserMixin, Base):
     __tablename__ = 'Student'
