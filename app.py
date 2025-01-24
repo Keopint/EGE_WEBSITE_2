@@ -1,4 +1,6 @@
-from flask import Flask, render_template, request, redirect, url_for, send_file, jsonify, url_for, flash
+from flask import (Flask, render_template, request, redirect,
+                   url_for, send_file, jsonify, url_for, flash,
+                   render_template_string)
 from flask_login import current_user, login_user, logout_user
 import os
 from sqlalchemy import and_, select, asc, desc
@@ -13,6 +15,7 @@ from create_app import app
 from create_db import create_database_if_not_exists
 from random import choices
 from string import ascii_letters
+from md_to_html import markdown_to_html
 
 
 @login_manager.user_loader
@@ -26,12 +29,12 @@ def load_user(user_id):
 
 create_database_if_not_exists()
 
-old_render_template = render_template
+def add_render_arguments_decorator(func):
+    def new_func(*args, **kwargs):
+        return func(*args, **kwargs, current_user=current_user)
+    return new_func
 
-def new_render_template(*args, **kwargs):
-    return old_render_template(*args, **kwargs, current_user=current_user)
-
-render_template = new_render_template
+render_template = add_render_arguments_decorator(render_template)
 # сделал подставление current_user в render templates
 
 def add_task(source: str, statement: str,  number: int, difficulty: int, answer: int, file_name: str, solution: str = "NO"):
@@ -71,7 +74,7 @@ def add_student(name: str,  surname: str, patronymic: str, class_number: int, em
 
 def renamed_file(filename):
     expansion = filename[filename.rfind("."):]
-    newname = choices(ascii_letters, k=12)
+    newname = "".join(choices(ascii_letters, k=12))
     return newname + expansion
 
 
@@ -244,7 +247,7 @@ def add_post():
     text = ""
     if request.method == "POST":
         name = request.form['name']
-        text = request.form['text']
+        text = markdown_to_html(request.form['text'])
         image = request.files['file']
         filename = renamed_file(image.filename)
         if len(image.filename) != 0:
@@ -266,7 +269,7 @@ def post_update(id):
     if request.method == "POST":
         if "post_scenary" in request.form:
             name = request.form['name']
-            text = request.form['text']
+            text = markdown_to_html(request.form['text'])
             image = request.files['file']
             filename = renamed_file(image.filename)
             if len(image.filename) != 0:
@@ -289,10 +292,10 @@ def posts():
 
 @app.route("/posts/<int:id>")
 def post_detail(id):
-    table = get_post_by_id(id)
-    return render_template("post_detail.html", table=table)
+    table: Post = get_post_by_id(id)
+    return render_template_string(table.text)
 
 if __name__ == "__main__":
     app.jinja_env.auto_reload = True
     app.config['TEMPLATES_AUTO_RELOAD'] = True
-    app.run(port=8080, host="127.0.0.2", debug=True)   
+    app.run(port=8080, host="127.0.0.2", debug=True)

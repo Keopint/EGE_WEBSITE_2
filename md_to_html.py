@@ -1,18 +1,20 @@
 import os
 
 
-def markdown_to_html(md_text, css_path):
-    html_text = """<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{css_path}">
-    <title>Markdown to HTML</title>
-</head>
-<body>
-    <div class="container">
-""".format(css_path=css_path)
+def markdown_to_html(md_text):
+    html_text = """{% extends "base.html" %}
+
+{% block title %}
+Главная страница
+{% endblock %}
+
+{% block script %}
+{% endblock %}
+
+{% block body %} 
+<div class="row py-lg-5 text-center">
+  <div class="col-lg-6 col-md-8 mx-auto">
+"""
 
     lines = md_text.split('\n')
     inside_table = False
@@ -72,10 +74,9 @@ def markdown_to_html(md_text, css_path):
     if inside_table:
         html_text += process_table(table_lines)
 
-    html_text += """
-    </div>
-</body>
-</html>
+    html_text += """</div>
+</div>
+{% endblock %}
 """
     
     return html_text
