@@ -58,7 +58,9 @@ ul, li {
   list-style: none;
 }
 
-
+header a, li, h1, h2, h3, h4, p {
+  font-family: 'Courier New', Courier, monospace;
+}
 
 
 
