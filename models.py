@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, Text, DateTime
+from datetime import datetime
 from database import Base
 from flask_login import UserMixin, LoginManager
 from create_app import login_manager
@@ -11,6 +12,13 @@ class Class(Base):
     teacher_id = Column(Integer, nullable=False)
     count_student = Column(Integer, nullable=False)
 
+class Post(Base):
+    __tablename__ = 'Post'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(Text, nullable=False)
+    text = Column(Text, nullable=False)
+    filename = Column(Text)
 
 class Teacher(Base):
     __tablename__ = 'Teacher'

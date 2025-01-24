@@ -1,10 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for, send_file, jsonify, url_for, flash
 from flask_login import current_user, login_user, logout_user
 import os
-from sqlalchemy import and_
+from sqlalchemy import and_, select, asc, desc
 from sqlalchemy.orm import Session
 from database import SessionLocal
-from models import Student, Task, login_manager
+from models import Student, Task, Post, login_manager
 from datetime import datetime
 from io import BytesIO
 from fileinput import filename
@@ -111,6 +111,37 @@ def get_student_by_id(id):
     q = db.query(Student).get(id)
     return q
 
+def add_post_to_table(name: str,  text: str, filename: str):
+    db = SessionLocal()
+    try:
+        new_post = Post(
+            name=name, 
+            text=text, 
+            filename=filename
+            )
+        db.add(new_post)
+        db.commit()
+    finally:
+        db.close()
+
+def get_post_by_id(id):
+    db = SessionLocal()
+    try:
+        q = db.query(Post).get(id)
+    finally:
+        db.close()
+    return q
+
+def get_posts():
+    db = SessionLocal()
+    try:
+        posts = db.query(Post).order_by(desc(Post.id)).all()
+    finally:
+        db.close()
+    if len(posts) == 0:
+        return []
+    return posts
+
 @app.route('/')
 def main_page():
     return render_template("main_page.html")
@@ -199,6 +230,59 @@ def profile(id=None):
         user = get_student_by_id(id)
     return render_template("profile.html", user=user)
 
+@app.route("/add_post", methods=['POST', 'GET'])
+def add_post():
+    name = ""
+    text = ""
+    if request.method == "POST":
+        name = request.form['name']
+        text = request.form['text']
+        image = request.files['file']
+        filename = image.filename
+        if len(image.filename) != 0:
+            image.save(f"static/img/posts_img/{image.filename}")
+        else:
+            filename = "book.jpg"
+
+        add_post_to_table(name, text, filename)
+        return redirect(url_for('main_page'))
+            
+
+    return render_template("add_post.html")
+
+@app.route("/posts/<int:id>/update", methods=['GET', 'POST'])
+def post_update(id):
+    table = get_post_by_id(id)
+    is_generate = False
+    answer_dialog = ""
+    if request.method == "POST":
+        if "post_scenary" in request.form:
+            name = request.form['name']
+            text = request.form['text']
+            image = request.files['file']
+            filename = image.filename
+            if len(image.filename) != 0:
+                image.save(f"static/img/{image.filename}")
+            else:
+                filename = "book.jpg"
+
+            try:
+                add_post(name, text, filename)
+                return redirect(url_for('main_page'))
+            except:
+                return "ОШИБКА ВЫПОЛНЕНИЯ ПРОГРАММЫ"
+
+    return render_template("post_update.html")
+
+@app.route("/posts")
+def posts():
+    tables = get_posts()
+    return render_template("posts.html", tables=tables)
+
+@app.route("/posts/<int:id>")
+def post_detail(id):
+    table = get_post_by_id(id)
+    return render_template("post_detail.html", table=table)
 
 if __name__ == "__main__":
     app.jinja_env.auto_reload = True
