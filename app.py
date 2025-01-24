@@ -4,7 +4,7 @@ import os
 from sqlalchemy import and_
 from sqlalchemy.orm import Session
 from database import SessionLocal
-from models import Student, Task, login_manager
+from models import Student, Task, login_manager, Submit
 from datetime import datetime
 from io import BytesIO
 from fileinput import filename
@@ -200,7 +200,31 @@ def profile(id=None):
     return render_template("profile.html", user=user)
 
 
+@app.route("/check_answer", methods=['POST'])
+def check_answer():
+    data = request.json
+    task_id = data.get('task_id')
+    user_response = data.get('user_response')
+    task_answer = data.get('task_answer')
+
+    if current_user:
+        add_submit(task_id, current_user.id, user_response)
+
+    return jsonify({"status": "success", "message": "Answer received"})
+
+
+def add_submit(task_id: int, user_id: int, user_response: str) -> None:
+    db = SessionLocal()
+    try:
+        new_submit = Submit(task_id=task_id, user_id=user_id,
+                            user_response=user_response, date=datetime.today())
+        db.add(new_submit)
+        db.commit()
+    finally:
+        db.close()
+
+
 if __name__ == "__main__":
     app.jinja_env.auto_reload = True
     app.config['TEMPLATES_AUTO_RELOAD'] = True
-    app.run(port=8080, host="127.0.0.2", debug=True)   
+    app.run(port=8080, host="127.0.0.2", debug=True)
