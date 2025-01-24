@@ -36,13 +36,13 @@ def markdown_to_html(md_text, css_path):
                     header_level += 1
                     line = line[1:].strip()
                 html_text += f"<h{header_level}>{line}</h{header_level}>\n"
-            elif '**' in line:
-                while '**' in line:
-                    start_bold = line.find('**')
-                    end_bold = line.find('**', start_bold + 2)
+            elif '*' in line:
+                while '*' in line:
+                    start_bold = line.find('*')
+                    end_bold = line.find('*', start_bold + 1)
                     if end_bold == -1:
                         break
-                    bold_text = line[start_bold + 2:end_bold]
+                    bold_text = line[start_bold + 1:end_bold]
                     line = line[:start_bold] + f"<strong>{bold_text}</strong>" + line[end_bold + 2:]
                 html_text += f"<p>{line}</p>\n"
             elif '[[' in line and ']]' in line:
