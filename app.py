@@ -293,7 +293,8 @@ def posts():
 @app.route("/posts/<int:id>")
 def post_detail(id):
     table: Post = get_post_by_id(id)
-    return render_template_string(table.text)
+    text = render_template_string(table.text)
+    return render_template("post.html", text=text)
 
 if __name__ == "__main__":
     app.jinja_env.auto_reload = True

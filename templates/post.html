@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}
+Пост
+{% endblock %}
+
+{% block script %}
+{% endblock %}
+
+<!-- приветствую тебя, дорогой Михаил -->
+
+{% block body %}
+
+<div class="col-lg-6 col-md-8 mx-auto">
+  <div class="row py-lg-5 text-center">
+    {{text|safe}}
+    <!-- safe не убирать! иначе не будет норм отрисовки -->
+  </div>
+</div>
+<div id="chatinfodiv37" style="display: none; visibility: hidden;">{{post_id}}</div>
+<!-- div с нужной информацией -->
+<div id="chatdiv37">
+<!-- тут с помощью js вставится чат когда я это доделаю -->
+</div>
+{% endblock %}
+
