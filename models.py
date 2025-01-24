@@ -109,6 +109,6 @@ class Submit(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     task_id = Column(Integer, nullable=False)
     user_id = Column(Integer, nullable=False)
-    user_response = Column(String)
+    user_response = Column(Integer)
     date = Column(Date, nullable=False)
 
