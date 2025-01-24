@@ -1,5 +1,7 @@
 from sqlalchemy import Column, Integer, String, Text, DateTime
 from database import Base
+from flask_login import UserMixin, LoginManager
+from create_app import login_manager
 
 class Class(Base):
     __tablename__ = 'Class'
@@ -19,6 +21,18 @@ class Teacher(Base):
     patronymic = Column(Text, nullable=False)
     year = Column(Integer, nullable=False)
 
+    def is_authenticated(self):
+        return True
+    
+    def is_active(self):
+        return True
+    
+    def is_anonymous(self):
+        return False
+    
+    def get_id(self):
+        return "TeacherId" + str(self.id)
+
 
 class class_test(Base):
     __tablename__ = 'class_test'
@@ -28,8 +42,7 @@ class class_test(Base):
     test_id = Column(Integer, nullable=False)
 
 
-
-class Student(Base):
+class Student(UserMixin, Base):
     __tablename__ = 'Student'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -41,6 +54,19 @@ class Student(Base):
     email = Column(String, nullable=False)
     class_number = Column(Integer, nullable=False)
     avatar = Column(String, nullable=False)
+
+    def is_authenticated(self):
+        return True
+    
+    def is_active(self):
+        return True
+    
+    def is_anonymous(self):
+        return False
+    
+    def get_id(self):
+        return str(self.id)
+
 
 class class_student(Base):
     __tablename__ = 'class_student'

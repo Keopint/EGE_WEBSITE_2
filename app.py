@@ -1,17 +1,36 @@
 from flask import Flask, render_template, request, redirect, url_for, send_file, jsonify, url_for, flash
-from flask_login import current_user, login_user
+from flask_login import current_user, login_user, logout_user
 import os
 from sqlalchemy import and_
 from sqlalchemy.orm import Session
 from database import SessionLocal
-from models import Student, Task
+from models import Student, Task, login_manager
 from datetime import datetime
 from io import BytesIO
-from fileinput import filename 
+from fileinput import filename
 from hashlib import sha256
+from create_app import app
+from create_db import create_database_if_not_exists
 
-app = Flask(__name__)
-app.secret_key = os.urandom(24)
+
+@login_manager.user_loader
+def load_user(user_id):
+    db = SessionLocal()
+    u = db.get(Student, int(user_id))
+    # u = db.query(Student).filter(Student.email == user_email).first()
+    db.close()
+    return u
+
+
+create_database_if_not_exists()
+
+old_render_template = render_template
+
+def new_render_template(*args, **kwargs):
+    return old_render_template(*args, **kwargs, current_user=current_user)
+
+render_template = new_render_template
+# сделал подставление current_user в render templates
 
 def add_task(source: str, statement: str,  number: int, difficulty: int, answer: int, file_name: str, solution: str = "NO"):
     db = SessionLocal()
@@ -81,10 +100,11 @@ def add_task_form():
         return render_template("success_add.html")
     return render_template("add_task_form.html")
 
-def get_student_by_email(email):
+def get_user_by_email(email):
     db = SessionLocal()
     q = db.query(Student).filter(Student.email == email).first()
     return q
+    
 
 def get_student_by_id(id):
     db = SessionLocal()
@@ -159,14 +179,24 @@ def login_form():
         email = request.form["email"]
         password = request.form["password"]
         if authorize(email, password):
-            q = get_student_by_email(email)
-            return redirect(url_for("profile", id=q.id))
+            q = get_user_by_email(email)
+            print("login", login_user(q))
+            return redirect(url_for("profile"))
         return render_template("login_form.html", msg="Неправильный логин или пароль")
     return render_template("login_form.html", msg=msg)
 
+@app.route("/logout")
+def logout():
+    logout_user()
+    return redirect(url_for("main_page"))
+
 @app.route("/profile/<id>", methods=['GET', 'POST'])
-def profile(id):
-    user = get_student_by_id(id)
+@app.route("/profile", methods=['GET', 'POST'])
+def profile(id=None):
+    if id is None:
+        user = current_user
+    else:
+        user = get_student_by_id(id)
     return render_template("profile.html", user=user)
 
 
