@@ -11,6 +11,8 @@ from fileinput import filename
 from hashlib import sha256
 from create_app import app
 from create_db import create_database_if_not_exists
+from statistics import get_tasks_per_days, get_data_each_task_type
+import json
 
 
 @login_manager.user_loader
@@ -134,6 +136,7 @@ def tasks():
                 difficulty.append(i)
             else:
                  checkbox_difficulty_checked[i] = False
+
     tasks = get_tasks(number_array, difficulty)
     return render_template("tasks.html", tasks = tasks, checkbox_task_checked = checkbox_task_checked, checkbox_difficulty_checked = checkbox_difficulty_checked)
 
@@ -197,7 +200,11 @@ def profile(id=None):
         user = current_user
     else:
         user = get_student_by_id(id)
-    return render_template("profile.html", user=user)
+    data_per_day = get_tasks_per_days(user.id)
+    data_per_type = get_data_each_task_type(user.id)
+    data_per_day_str = [[date.isoformat(), value] for date, value in data_per_day]
+    data_per_day_json = json.dumps(data_per_day_str)
+    return render_template("profile.html", user=user, data_per_day_json=data_per_day_json, data_per_type=data_per_type)
 
 
 @app.route("/check_answer", methods=['POST'])

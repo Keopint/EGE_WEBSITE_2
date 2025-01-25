@@ -122,13 +122,18 @@
               dataTable.addColumn({
                 type: 'number', id: 'Won/Loss' }
                                  );
-              dataTable.addRows([
-                [ new Date(2025, 0, 12), 5 ],
-                [ new Date(2025, 0, 14), 7 ],
-                [ new Date(2025, 0, 5), 2 ],
-                [ new Date(2025, 0, 2), 3 ],
-                [ new Date(2025, 0, 17), 10 ],
-              ]);
+
+              var data_per_day_json = '{{ data_per_day_json | safe }}';
+              var data_per_day_str = JSON.parse(data_per_day_json);
+              var data_per_day = data_per_day_str.map(function(item) {
+                  var dateParts = item[0].split('-');
+                  var year = parseInt(dateParts[0], 10);
+                  var month = parseInt(dateParts[1], 10) - 1; // Месяцы в JavaScript начинаются с 0
+                  var day = parseInt(dateParts[2], 10);
+                  return [new Date(year, month, day), item[1]];
+              });
+
+              dataTable.addRows(data_per_day);
               var chart = new google.visualization.Calendar(document.getElementById('calendar_basic'));
               var options = {
                 height: 350,
@@ -160,13 +165,7 @@
                           );
         google.charts.setOnLoadCallback(drawChart);
         function drawChart() {
-          var data = google.visualization.arrayToDataTable([
-            ['Задание', 'Верно', 'Неправильно'],
-            ['1', 1000, 400],
-            ['2', 1170, 460],
-            ['3', 660, 1120],
-            ['4', 1030, 540]
-          ]);
+          var data = google.visualization.arrayToDataTable({{ data_per_type | tojson }});
           var options = {
             backgroundColor: 'transparent'
           };

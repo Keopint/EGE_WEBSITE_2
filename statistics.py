@@ -36,10 +36,10 @@ def get_type_statistics(user_id: int) -> dict:
     return numbers
 
 
-def get_n_sagging_tasks(user_id: int) -> list[int]:
+def get_n_sagging_tasks(user_id: int, n: int) -> list[int]:
     numbers = get_type_statistics(user_id)
     numbers = sorted([[number, numbers[number]] for number in numbers],
-                     key=lambda x: x[1]['correct'] / x[1]['number'], reverse=True)[:2]
+                     key=lambda x: x[1]['correct'] / x[1]['number'], reverse=True)[:n - 1]
     return [number[0] for number in numbers]
 
 
@@ -47,4 +47,8 @@ def get_data_each_task_type(user_id: int) -> list[list[str, int, int]]:
     numbers = get_type_statistics(user_id)
     numbers = [["КИМ " + str(number), numbers[number]['correct'],
                 numbers[number]['number'] - numbers[number]['correct']] for number in numbers]
+    numbers = [['Задание', 'Верно', 'Неправильно']] + numbers
     return numbers
+
+
+# print(get_tasks_per_days(1))
