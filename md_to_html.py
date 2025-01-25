@@ -44,7 +44,7 @@ def links_converter(md_text):
                     codelang = "abc.md"
                 p = random_png_filename()
                 script2img(code, f"./static/img/code/{p}", codelang)
-                html_text += f'<img src="./static/img/code/{p}"></img>'
+                html_text += f'<img src="/static/img/code/{p}"></img>'
                 code = ""
                 codelang = "md"
             else:
@@ -59,7 +59,22 @@ def links_converter(md_text):
                     break
             iscode = True
             continue
-        if '[[' in line and ']]' in line:
+        if line.startswith('#'):
+            header_level = 0
+            while line.startswith('#'):
+                header_level += 1
+                line = line[1:].strip()
+            html_text += f"<h{header_level}>{line}</h{header_level}>\n"
+        elif '*' in line:
+            while '*' in line:
+                start_bold = line.find('*')
+                end_bold = line.find('*', start_bold + 1)
+                if end_bold == -1:
+                    break
+                bold_text = line[start_bold + 1:end_bold]
+                line = line[:start_bold] + f"<strong>{bold_text}</strong>" + line[end_bold + 2:]
+            html_text += f"<p>{line}</p>\n"
+        elif '[[' in line and ']]' in line:
             while '[[' in line and ']]' in line:
                 start_img = line.find('[[')
                 end_img = line.find(']]', start_img)
