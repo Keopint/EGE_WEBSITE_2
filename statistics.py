@@ -45,8 +45,9 @@ def get_n_sagging_tasks(user_id: int, n: int) -> list[int]:
 
 def get_data_each_task_type(user_id: int) -> list[list[str, int, int]]:
     numbers = get_type_statistics(user_id)
-    numbers = [["КИМ " + str(number), numbers[number]['correct'],
-                numbers[number]['number'] - numbers[number]['correct']] for number in numbers]
+    numbers = sorted([[number, numbers[number]['correct'], numbers[number]['number'] - numbers[number]['correct']]
+                      for number in numbers], key=lambda x: x[0])
+    numbers = list(map(lambda x: ['КИМ ' + str(x[0]), x[1], x[2]], numbers))
     numbers = [['Задание', 'Верно', 'Неправильно']] + numbers
     return numbers
 
