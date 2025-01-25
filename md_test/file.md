@@ -9,4 +9,17 @@
 [[https://youtu.be/VURUUmNXFi4?si=jOtR_kafuslSFuMv]]
 sdlfjsdlkfjdsfklsdlfjsdlkfjdsfklsdlfjsdlkfjdsfklsdlfjsdlkfjdsfklsdlfjsdlkfjdsfklsdlfjsdlkfjdsfklsdlfjsdlkfjdsfklsdlfjsdlkfjdsfklsdlfjsdlkfjdsfklsdlfjsdlkfjdsfklsdlfjsdlkfjdsfklsdlfjsdlkfjdsfklsdlfjsdlkfjdsfklsdlfjsdlkfjdsfklsdlfjsdlkfjdsfklsdlfjsdlkfjdsfklsdlfjsdlkfjdsfklsdlfjsdlkfjdsfklsdlfjsdlkfjdsfklsdlfjsdlkfjdsfkl
 
+```py
+class Main:
+  a = 5
+
+  def __init__(self):
+    a = 8
+
+
+def main():
+  m = Main()
+  print(m.a)
+```
+
 Some complex formula: $$P(|S - E[S]| \ge t) \le 2 \exp \left( -\frac{2 t^2 n^2}{\sum_{i = 1}^n (b_i - a_i)^2} \right).$$
