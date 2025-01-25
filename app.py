@@ -204,16 +204,16 @@ def profile(id=None):
 def check_answer():
     data = request.json
     task_id = data.get('task_id')
-    user_response = data.get('user_response')
+    user_response = int(data.get('user_response'))
     task_answer = data.get('task_answer')
 
-    if current_user:
+    try:
         add_submit(task_id, current_user.id, user_response)
+    finally:
+        return jsonify({"status": "success", "message": "Answer received"})
 
-    return jsonify({"status": "success", "message": "Answer received"})
 
-
-def add_submit(task_id: int, user_id: int, user_response: str) -> None:
+def add_submit(task_id: int, user_id: int, user_response: int) -> None:
     db = SessionLocal()
     try:
         new_submit = Submit(task_id=task_id, user_id=user_id,
