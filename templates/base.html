@@ -39,9 +39,15 @@
           <li style="margin-top: auto; margin-bottom: auto;""><a href="{{url_for('add_task_form')}}" class="nav-link px-2 text-white be_centered" style="text-decoration: none; margin-top: auto; margin-bottom: auto;">Добавить задание</a></li>
         </ul>
 
-        <div class="text-end" style="margin-right: 10px">
-          <a href="{{url_for('login_form')}}"><button type="button" class="btn btn-outline-light me-2">Вход</button></a>
-          <a href="{{url_for('register_choice')}}"><button type="button" class="btn btn-outline-light me-2">Регистрация</button></a>
+        <div class="text-end right_header">
+          {% if current_user %}
+            <a class="uk-link-reset"><img class="be_centered" src="../static/img/avatars/{{ current_user.filename }}" width="50" height="50"></a>
+            <a class="uk-link-reset"><p class="be_centered">{{ current_user.name }}</p></a>
+            <a href="/logout"><button type="button" class="btn btn-outline-light me-2">Выйти</button></a>
+          {% else %}
+            <a href="{{url_for('login_form')}}"><button type="button" class="btn btn-outline-light me-2">Вход</button></a>
+            <a href="{{url_for('register_choice')}}"><button type="button" class="btn btn-outline-light me-2">Регистрация</button></a>
+          {% endif %}
         </div>
     </div>
   </header>

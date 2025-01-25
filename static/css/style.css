@@ -62,6 +62,26 @@ header a, li, h1, h2, h3, h4, p {
   font-family: 'Courier New', Courier, monospace;
 }
 
+.right_header {
+  margin-right: 20px; 
+  display: flex; 
+  justify-content: space-around; 
+  align-items: center;
+  height: 100%;
+  width: auto;
+}
+
+.right_header p {
+  font-size: x-large;
+  color: white;
+  margin-right: 10px;
+}
+
+.right_header img {
+  border-radius: 50px;
+  margin-right: 10px;
+}
+
 
 
 
