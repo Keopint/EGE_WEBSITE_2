@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime
+from sqlalchemy import Column, Integer, String, Text, DateTime, Date
 from datetime import datetime
 from database import Base
 from flask_login import UserMixin, LoginManager
@@ -117,3 +117,14 @@ class test_task(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     test_id = Column(Integer, nullable=False)
     task_id = Column(Integer, nullable=False)
+
+
+class Submit(Base):
+    __tablename__ = 'Submit'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    task_id = Column(Integer, nullable=False)
+    user_id = Column(Integer, nullable=False)
+    user_response = Column(String)
+    date = Column(Date, nullable=False)
+
