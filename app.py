@@ -6,7 +6,7 @@ import os
 from sqlalchemy import and_, select, asc, desc
 from sqlalchemy.orm import Session
 from database import SessionLocal
-from models import Student, Task, login_manager, Post, Sumbit
+from models import Student, Task, login_manager, Post, Submit
 from datetime import datetime
 from io import BytesIO
 from fileinput import filename

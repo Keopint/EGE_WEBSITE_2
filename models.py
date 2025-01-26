@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime
+from sqlalchemy import Column, Integer, String, Text, DateTime, Date
 from datetime import datetime
 from database import Base
 from flask_login import UserMixin, LoginManager
