@@ -10,17 +10,31 @@
 <!-- приветствую тебя, дорогой Михаил -->
 
 {% block body %}
-
-<div class="col-lg-6 col-md-8 mx-auto">
-  <div class="row py-lg-5 text-center">
-    {{text|safe}}
-    <!-- safe не убирать! иначе не будет норм отрисовки -->
+<div class="post_detail pt-1">
+  <div class="container w-100 mt-5 mb-4">
+      <div class="container w-50 mt-5">
+          <table class="table table-bordered">  
+              <tbody>
+              <tr>    
+                  <td colspan="2"><h1 align="center">{{table.name}}</h1></td>
+              </tr>
+              </tbody>
+          </table>
+      </div>
+    <textarea name="text" id="text" class="textareaElement form-control" rows="{{cnt_row}}" placeholder="Статья" readonly>{{table.text}}</textarea><br>
+    {% if table.video_link != "" %}
+      <iframe width="720" height="405"
+      src="https://rutube.ru/play/embed/{{table.video_link}}" frameBorder="0" allow="clipboard-write; autoplay"
+      webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+    {% endif %}
+    <h3>Дата: {{table.date}}</h3>
+    <a class="btn btn-success" href="{{table.id}}/update">Редактировать</a>
+    <a class="btn btn-danger" href="{{table.id}}/delete">Удалить</a>
   </div>
-</div>
-<div id="chatinfodiv37" style="display: none; visibility: hidden;">{{post_id}}</div>
-<!-- div с нужной информацией -->
-<div id="chatdiv37">
-<!-- тут с помощью js вставится чат когда я это доделаю -->
+  <div id="chatinfodiv37" style="display: none; visibility: hidden;">{{table.id}}</div>
+  <div id="chatdiv37">
+    <!-- тут с помощью js вставится чат когда я это доделаю -->
+    </div>
 </div>
 {% endblock %}
 

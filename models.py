@@ -18,7 +18,9 @@ class Post(Base):
     id = Column(Integer, primary_key=True)
     name = Column(Text, nullable=False)
     text = Column(Text, nullable=False)
-    filename = Column(Text)
+    avatar_name = Column(Text)
+    video_link = Column(Text)
+    date = Column(DateTime, default=lambda: datetime.utcnow().replace(second=0, microsecond=0))
 
 class Teacher(Base):
     __tablename__ = 'Teacher'
