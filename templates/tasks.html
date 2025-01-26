@@ -103,36 +103,16 @@
         const resultDiv = document.getElementById(`result_${taskId}`);
         const inputField = document.getElementById(`userResponse_${taskId}`);
 
-        // Отправка данных на сервер
-        fetch('/check_answer', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                task_id: taskId,
-                user_response: userResponse,
-                task_answer: taskAnswer
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === "success") {
-                // Проверка ответа
-                if (userResponse.trim().toLowerCase() === taskAnswer.toLowerCase()) {
-                    resultDiv.innerText = "Ответ верный!";
-                    resultDiv.style.color = "green";
-                    inputField.style.backgroundColor = "lightgreen";
-                } else {
-                    resultDiv.innerText = "Ответ неверный. Попробуйте еще раз.";
-                    resultDiv.style.color = "red";
-                    inputField.style.backgroundColor = "lightcoral";
-                }
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+        // Проверка ответа
+        if (userResponse.trim().toLowerCase() === taskAnswer.toLowerCase()) {   
+            resultDiv.innerText = "Ответ верный!";
+            resultDiv.style.color = "green";
+            inputField.style.backgroundColor = "lightgreen";
+        } else {
+            resultDiv.innerText = "Ответ неверный. Попробуйте еще раз.";
+            resultDiv.style.color = "red";
+            inputField.style.backgroundColor = "lightcoral";
+        }
 
         return false; // Возвращаем false, чтобы предотвратить перезагрузку страницы
     }
@@ -168,35 +148,15 @@
 
             console.log(`Задача №${taskId} - Пользовательский ответ: ${userResponse.value}, Правильный ответ: ${taskAnswer}`);
 
-            // Отправка данных на сервер
-            fetch('/check_answer', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    task_id: taskId,
-                    user_response: userResponse.value,
-                    task_answer: taskAnswer
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === "success") {
-                    if (userResponse.value.trim().toLowerCase() === taskAnswer.toLowerCase()) {
-                        resultDiv.innerText = "Ответ верный!";
-                        resultDiv.style.color = "green";
-                        userResponse.style.backgroundColor = "lightgreen";
-                    } else {
-                        resultDiv.innerText = "Ответ неверный. Попробуйте еще раз.";
-                        resultDiv.style.color = "red";
-                        userResponse.style.backgroundColor = "lightcoral";
-                    }
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
+            if (userResponse.value.trim().toLowerCase() === taskAnswer.toLowerCase()) {
+                resultDiv.innerText = "Ответ верный!";
+                resultDiv.style.color = "green";
+                userResponse.style.backgroundColor = "lightgreen";
+            } else {
+                resultDiv.innerText = "Ответ неверный. Попробуйте еще раз.";
+                resultDiv.style.color = "red";
+                userResponse.style.backgroundColor = "lightcoral";
+            }
         });
         window.scrollTo({ top: 0, behavior: 'smooth' });
         return;

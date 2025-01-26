@@ -5,14 +5,50 @@
 {% endblock %}
 
 {% block body %}
-<div class="container mt-5">
-    <h1 align="center" style="margin-bottom: 2%; font-size:300%;">Новая статья</h1>
+<div class="container pt-4">
     <form method="post" enctype="multipart/form-data">
-        <p align= "center"><input type="text" name="name" id="name" class="form-control" value="" style="height: 100%; width: 40%; font-size: 250%; text-align: center; font-weight: bold;" placeholder="Название статьи" required></p><br>
-        <textarea name="text" id="text" class="form-control"  placeholder="Статья" rows="15"></textarea><br>
+        <p align="center">
+            <input type="text" name="name" id="name" class="form-control" value="" style="height: 100%; width: 40%; font-size: 250%; text-align: center; font-weight: bold;" placeholder="Название статьи" required>
+        </p><br>
+        <textarea name="text" id="text" class='form-control textareaElement'></textarea>
+        
+        <label class="pt-2">Добавить видео в статью(ссылка)</label>
+        <input type="text" class="form-control mb-3" id="video_link" name="video_link" style="width:30%;">
         <input type="file" name="file" id="file" class="form-control" style="width: 22%"><br>
-        <input type="submit" name="post_scenary" class="btn btn-success mb-3" value="Запостить статью"> 
+        <input id="send_post" type="submit" name="send_post" class="btn btn-success mb-3" value="Запостить статью"> 
     </form>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript"></script>  
+
+    <script>
+        const textarea = document.getElementById('text');
+
+        textarea.addEventListener('input', function() {
+            // Сбрасываем высоту, чтобы правильно пересчитать
+            this.style.height = 'auto'; 
+            
+            // Устанавливаем новую высоту на основе scrollHeight
+            this.style.height = this.scrollHeight + 'px'; 
+            
+            // Проверяем, если высота превышает минимальную высоту
+            const lineHeight = parseInt(getComputedStyle(textarea).lineHeight);
+            const maxHeight = lineHeight * (this.rows + 1); // Максимальная высота для текущих строк
+
+            // Если высота содержимого превышает максимальную, добавляем строку
+            if (this.scrollHeight > maxHeight) {
+                this.rows += 1; // Увеличиваем количество строк
+            }
+        });
+
+        textarea.addEventListener('keydown', function(event) {
+            if (event.key === 'Backspace') {
+                const currentLine = this.value.substr(0, this.selectionStart).split('\n').pop();
+                // Проверяем, если курсор в начале последней строки
+                if (this.selectionStart === this.value.length - currentLine.length) {
+                    if (this.rows > 1) { // Уменьшаем количество строк, если это не первая строка
+                        this.rows -= 1; // Уменьшаем количество строк
+                    }
+                }
+            }
+        });
+    </script>
 </div>
 {% endblock %}      
