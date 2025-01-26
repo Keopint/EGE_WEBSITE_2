@@ -1,3 +1,107 @@
+.header {
+  height: 6vh;
+  display: flex;
+  justify-content: space-between;
+  background-color: #2e2e2e;
+}
+
+header {
+  position: fixed;
+  top: 0;
+  width: 100%; /* Шапка займёт всю ширину окна браузера */
+  z-index: 1000; /* Высокое значение, чтобы шапка была всегда на первом плане */
+}
+
+/**/
+
+a {
+  text-decoration: none;
+}
+
+.a_head {
+  color: white;
+}
+
+.div_logo {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 50vw;
+  height: 5vh;
+  /* border: 5px solid green; */
+}
+
+.be_centered {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.logo_png {
+  width: 5vh;
+  height: 5vh;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+
+.links {
+  display: flex;
+  justify-content: space-around;
+  width: 50%;
+  height: 100%;
+  align-items: center;
+  /* border: 5px solid black; */
+  text-align: center;
+}
+
+ul, li {
+  list-style: none;
+}
+
+header a, li, h1, h2, h3, h4, p {
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.right_header {
+  margin-right: 20px; 
+  display: flex; 
+  justify-content: space-around; 
+  align-items: center;
+  height: 100%;
+  width: auto;
+}
+
+.right_header p {
+  font-size: x-large;
+  color: white;
+  margin-right: 10px;
+}
+
+.right_header img {
+  border-radius: 50px;
+  margin-right: 10px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Какая-то фигня снизу */
+
 .check_button {
     padding: .5em 1em;
     border: 1;

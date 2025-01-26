@@ -1,0 +1,67 @@
+.main {
+    margin-top: 60px;
+    width: 100vw;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.main_info {
+    width: 100vw;
+    height: 40vh;
+    padding: 20px;
+    display: flex;
+    /* border: 5px solid gold; */
+}
+
+.left {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    /* border: 5px solid blue; */
+}
+
+.left h1 {
+    font-size: 60px;
+    font-weight: bold;
+}
+
+.right {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    /* border: 5px solid green; */
+}
+
+.right img {
+    width: 35vh;
+    height: 35vh;
+    margin-top: auto;
+    margin-bottom: auto;
+    /* border: 2px solid pink; */
+}
+
+.cards-img {
+    width: 40vh;
+    height: 40vh;
+}
+
+/* cards */
+
+.cards {
+    width: 80vw;
+    display: flex;
+    flex-direction: column;
+}
+
+.main a, li, h1, h2, h3, h4, p {
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
