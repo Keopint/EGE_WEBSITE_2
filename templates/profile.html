@@ -33,7 +33,7 @@
                             <p class="mb-0">Имя</p>
                         </div>
                         <div class="col-sm-9">
-                            <p class="text-muted mb-0">{{user.firstName}}</p>
+                            <p class="text-muted mb-0">{{user.name}}</p>
                         </div>
                     </div>
                     <hr>
@@ -42,7 +42,7 @@
                             <p class="mb-0">Фамилия</p>
                         </div>
                         <div class="col-sm-9">
-                            <p class="text-muted mb-0">{{user.lastName}}</p>
+                            <p class="text-muted mb-0">{{user.surname}}</p>
                         </div>
                     </div>
                     <hr>
@@ -51,7 +51,7 @@
                             <p class="mb-0">Отчество</p>
                         </div>
                         <div class="col-sm-9">
-                            <p class="text-muted mb-0">{{user.fatherName}}</p>
+                            <p class="text-muted mb-0">{{user.patronymic}}</p>
                         </div>
                     </div>
                     <hr>
@@ -96,5 +96,81 @@
         </div>
         </div>
       </section>
+      <section>
+    <div class="graph-calendar" align="center">
+      <html>
+        <head>
+          <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js">
+          </script>
+          <script type="text/javascript">
+            google.charts.load("current", {
+              packages:["calendar"]}
+                              );
+            google.charts.setOnLoadCallback(drawChart);
+            function drawChart() {
+              var dataTable = new google.visualization.DataTable();
+              dataTable.addColumn({
+                type: 'date', id: 'Date' }
+                                 );
+              dataTable.addColumn({
+                type: 'number', id: 'Won/Loss' }
+                                 );
+
+              var data_per_day_json = '{{ data_per_day_json | safe }}';
+              var data_per_day_str = JSON.parse(data_per_day_json);
+              var data_per_day = data_per_day_str.map(function(item) {
+                  var dateParts = item[0].split('-');
+                  var year = parseInt(dateParts[0], 10);
+                  var month = parseInt(dateParts[1], 10) - 1; // Месяцы в JavaScript начинаются с 0
+                  var day = parseInt(dateParts[2], 10);
+                  return [new Date(year, month, day), item[1]];
+              });
+
+              dataTable.addRows(data_per_day);
+              var chart = new google.visualization.Calendar(document.getElementById('calendar_basic'));
+              var options = {
+                height: 350,
+                legend: 'none',
+                calendar: {
+                  daysOfWeek: ' П С П ',
+                },
+                colorAxis: {
+                  textPosition: 'none',
+                  minValue: 0
+                }
+              };
+              chart.draw(dataTable, options);
+            }
+          </script>
+        </head>
+        <body>
+          <div id="calendar_basic" style="width: 1000px; height: 350px;">
+          </div>
+        </body>
+      </html>
+    </div>
+    <div class="graph-stats" align="center">
+      <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js">
+      </script>
+      <script type="text/javascript">
+        google.charts.load('current', {
+          'packages':['bar']}
+                          );
+        google.charts.setOnLoadCallback(drawChart);
+        function drawChart() {
+          var data = google.visualization.arrayToDataTable({{ data_per_type | tojson }});
+          var options = {
+            backgroundColor: 'transparent'
+          };
+          var chart = new google.charts.Bar(document.getElementById('columnchart_material'));
+          chart.draw(data, google.charts.Bar.convertOptions(options));
+        }
+      </script>
+      <body>
+        <div id="columnchart_material" style="width: 70%; height: 100%;">
+        </div>
+      </body>
+    </div>
+  </section>
 </div>
 {% endblock %}

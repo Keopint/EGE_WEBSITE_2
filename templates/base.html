@@ -40,7 +40,7 @@
         </ul>
 
         <div class="text-end right_header">
-          {% if current_user %}
+          {% if current_user.is_authenticated %}
             <a class="uk-link-reset"><img class="be_centered" src="../static/img/avatars/{{ current_user.filename }}" width="50" height="50"></a>
             <a class="uk-link-reset"><p class="be_centered">{{ current_user.name }}</p></a>
             <a href="/logout"><button type="button" class="btn btn-outline-light me-2">Выйти</button></a>
