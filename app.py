@@ -6,13 +6,15 @@ import os
 from sqlalchemy import and_, select, asc, desc
 from sqlalchemy.orm import Session
 from database import SessionLocal
-from models import Student, Task, Post, login_manager
+from models import Student, Task, login_manager, Post, Sumbit
 from datetime import datetime
 from io import BytesIO
 from fileinput import filename
 from hashlib import sha256
 from create_app import app
 from create_db import create_database_if_not_exists
+from statistics import get_tasks_per_days, get_data_each_task_type
+import json
 from random import choices
 from string import ascii_letters
 from md_to_html import markdown_to_html
@@ -176,6 +178,7 @@ def tasks():
                 difficulty.append(i)
             else:
                  checkbox_difficulty_checked[i] = False
+
     tasks = get_tasks(number_array, difficulty)
     return render_template("tasks.html", tasks = tasks, checkbox_task_checked = checkbox_task_checked, checkbox_difficulty_checked = checkbox_difficulty_checked)
 
@@ -239,7 +242,35 @@ def profile(id=None):
         user = current_user
     else:
         user = get_student_by_id(id)
-    return render_template("profile.html", user=user)
+    data_per_day = get_tasks_per_days(user.id)
+    data_per_type = get_data_each_task_type(user.id)
+    data_per_day_str = [[date.isoformat(), value] for date, value in data_per_day]
+    data_per_day_json = json.dumps(data_per_day_str)
+    return render_template("profile.html", user=user, data_per_day_json=data_per_day_json, data_per_type=data_per_type)
+
+
+@app.route("/check_answer", methods=['POST'])
+def check_answer():
+    data = request.json
+    task_id = data.get('task_id')
+    user_response = int(data.get('user_response'))
+    task_answer = data.get('task_answer')
+
+    try:
+        add_submit(task_id, current_user.id, user_response)
+    finally:
+        return jsonify({"status": "success", "message": "Answer received"})
+
+
+def add_submit(task_id: int, user_id: int, user_response: int) -> None:
+    db = SessionLocal()
+    try:
+        new_submit = Submit(task_id=task_id, user_id=user_id,
+                            user_response=user_response, date=datetime.today())
+        db.add(new_submit)
+        db.commit()
+    finally:
+        db.close()
 
 @app.route("/add_post", methods=['POST', 'GET'])
 def add_post():
@@ -299,4 +330,5 @@ def post_detail(id):
 if __name__ == "__main__":
     app.jinja_env.auto_reload = True
     app.config['TEMPLATES_AUTO_RELOAD'] = True
+
     app.run(port=8080, host="127.0.0.2", debug=True)
