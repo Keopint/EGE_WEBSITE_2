@@ -21,7 +21,7 @@
               </tbody>
           </table>
       </div>
-    <textarea name="text" id="text" class="textareaElement form-control" rows="{{cnt_row}}" placeholder="Статья" readonly>{{table.text}}</textarea><br>
+      {{table.text | safe}}
     {% if table.video_link != "" %}
       <iframe width="720" height="405"
       src="https://rutube.ru/play/embed/{{table.video_link}}" frameBorder="0" allow="clipboard-write; autoplay"
