@@ -272,6 +272,8 @@ def add_submit(task_id: int, user_id: int, user_response: int) -> None:
     finally:
         db.close()
 
+
+
 @app.route("/add_post", methods=['POST', 'GET'])
 def add_post():
     name = ""
@@ -316,6 +318,7 @@ def post_update(id):
 
     return render_template("post_update.html")
 
+
 @app.route("/posts")
 def posts():
     tables = get_posts()
@@ -327,8 +330,8 @@ def post_detail(id):
     text = render_template_string(table.text)
     return render_template("post.html", text=text)
 
+
 if __name__ == "__main__":
     app.jinja_env.auto_reload = True
     app.config['TEMPLATES_AUTO_RELOAD'] = True
-
-    app.run(port=8080, host="127.0.0.2", debug=True)
+    app.run(port=8080, host="127.0.0.2", debug=True)   
