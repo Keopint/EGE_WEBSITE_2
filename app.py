@@ -366,7 +366,7 @@ def post_detail(id):
 
 def get_forum(db: Session, post: Post):
     mes = reversed(db.query(Message).filter(Message.post_id == post.id).order_by(Message.date).all())
-    with open("templates/forum.html") as f:
+    with open("templates/forum.html", encoding='utf-8') as f:
         template = f.read()
     return render_template_string(template, messages=mes)
 

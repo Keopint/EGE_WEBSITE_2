@@ -12,6 +12,45 @@ header {
   z-index: 1000; /* Высокое значение, чтобы шапка была всегда на первом плане */
 }
 
+.answer {
+  display: none; /* Скрываем ответ по умолчанию */
+  margin-top: 1%;
+  padding: 1%;
+}
+
+.comment {
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 10px 0;
+  background-color: #ffffff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+}
+
+.username {
+  color: #007bff; /* Синий цвет для имени пользователя */
+}
+
+.timestamp {
+  color: #888; /* Серый цвет для даты */
+  font-size: 0.9em;
+}
+
+.comment-body {
+  margin: 10px 0;
+}
+
+.comment-actions {
+  display: flex;
+  gap: 10px;
+}
+
 /**/
 
 a {

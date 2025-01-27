@@ -4,7 +4,7 @@ from mdtex2html import convert
 
 def latex(latex_code):
     print(latex_code)
-    return f"<span class='latex'>{convert("$" + latex_code + "$")}</span>"
+    return f"<span class='latex'>{convert('$' + latex_code + '$')}</span>"
 
 def markdown_to_html(markdown):
     code_blocks = re.findall(r'```(.*?)```', markdown, flags=re.DOTALL)
@@ -75,8 +75,19 @@ def markdown_to_html(markdown):
     markdown = re.sub(r'^(---|\*\*\*|___)', r'<hr>', markdown, flags=re.MULTILINE)
 
     # Таблицы
-    markdown = re.sub(r'^\|(.*)\|$', lambda match: f"<tr>{re.sub(r'\|', '</td><td>', match.group(1))}</tr>", markdown, flags=re.MULTILINE)
-    markdown = re.sub(r'^\|(.*)\|$\n\|(.*)\|$', lambda match: f"<table><thead><tr>{re.sub(r'\|', '</th><th>', match.group(1))}</tr></thead><tbody><tr>{re.sub(r'\|', '</td><td>', match.group(2))}</tr></tbody></table>", markdown, flags=re.MULTILINE)
+    markdown = re.sub(r'^\|(.*)\|', lambda match: "<tr>{}</tr>".format(re.sub(r'\|', '</td><td>', match.group(1))), markdown, flags=re.MULTILINE)
+    markdown = re.sub(
+        r'^\|(.*?)\|\s*\n\|(.*?)\|',
+        lambda match: (
+            "<table><thead><tr>{}</tr></thead><tbody><tr>{}</tr></tbody></table>"
+            .format(
+                re.sub(r'\|', '</th><th>', match.group(1)),
+                re.sub(r'\|', '</td><td>', match.group(2))
+            )
+        ),
+        markdown,
+        flags=re.MULTILINE
+    )
 
     for i, block in enumerate(formatted_latex_blocks):
         markdown = markdown.replace(f'LATEXPLACEHOLDER{i}', block)
