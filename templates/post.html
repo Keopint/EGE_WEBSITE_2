@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block script %}
+<script src="../static/forum.js"></script>
 {% endblock %}
 
 <!-- приветствую тебя, дорогой Михаил -->
@@ -37,7 +38,12 @@
     <a class="btn btn-danger" href="{{table.id}}/delete">Удалить</a>
   </div>
   <div id="chatinfodiv37" style="display: none; visibility: hidden;">{{table.id}}</div>
+  <div id="send_message_div">
+    <input type="text" value="" id="send_message_input" placeholder="Введите сообщение">
+    <button onclick="send_message()" class="btn btn-outline-success"></button>
+  </div>
   <div id="chatdiv37">
+    {{forum|safe}}
     <!-- тут с помощью js вставится чат когда я это доделаю -->
     </div>
 </div>

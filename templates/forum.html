@@ -1,0 +1,5 @@
+{% for mes in messages %}
+<div class="alert alert-info">
+  User: {{mes.user.name}}; Date: {{mes.date}}; Text: "{{mes.text}}"
+</div>
+{% endfor %}
