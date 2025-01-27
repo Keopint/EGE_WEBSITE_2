@@ -154,9 +154,10 @@ def delete_post(id):
     post = db.query(Post).get(id)
     if post:
         try:
-            file_path = f"static/img/posts_img/{post.avatar_name}"
-            if os.path.exists(file_path):
-                os.remove(file_path) 
+            if post.avatar_name != "book.jpg":
+                file_path = f"static/img/posts_img/{post.avatar_name}"
+                if os.path.exists(file_path):
+                    os.remove(file_path) 
             db.delete(post)
             db.commit()
         finally:
@@ -311,7 +312,6 @@ def add_post():
         if "send_post" in request.form:
             name = request.form['name']
             text = request.form['text']
-            text = markdown_to_html(text)
             image = request.files['file']
             avatar_name = renamed_file(image.filename)
             video_link = request.form["video_link"]
@@ -340,7 +340,6 @@ def post_update(id):
         if "send_post" in request.form:
             name = request.form['name']
             text = request.form['text']
-            text = markdown_to_html(text)
             image = request.files['file']
             avatar_name = renamed_file(image.filename)
             video_link = request.form["video_link"]
@@ -363,7 +362,8 @@ def posts():
 @app.route("/posts/<int:id>")
 def post_detail(id):
     table: Post = get_post_by_id(id)
-    return render_template("post.html", table=table, cnt_row=str(table.text).count('\n') + 1, forum=get_forum(SessionLocal(), table))
+    table_text = markdown_to_html(table.text)
+    return render_template("post.html", table=table, cnt_row=str(table.text).count('\n') + 1, forum=get_forum(SessionLocal(), table), table_text=table_text)
 
 def get_forum(db: Session, post: Post):
     mes = reversed(db.query(Message).filter(Message.post_id == post.id).order_by(Message.date).all())
