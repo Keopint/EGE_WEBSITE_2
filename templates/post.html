@@ -5,11 +5,17 @@
 {% endblock %}
 
 {% block script %}
+<script src="../static/forum.js"></script>
 {% endblock %}
 
 <!-- приветствую тебя, дорогой Михаил -->
 
 {% block body %}
+<!-- надеюсь, ты не сильно разозлишься из-за style в body.... -->
+<!-- но если что, заранее прости -->
+
+<link rel="stylesheet" href="../static/css/code_style.css">
+
 <div class="post_detail pt-1">
   <div class="container w-100 mt-5 mb-4">
       <div class="container w-50 mt-5">
@@ -32,9 +38,18 @@
     <a class="btn btn-danger" href="{{table.id}}/delete">Удалить</a>
   </div>
   <div id="chatinfodiv37" style="display: none; visibility: hidden;">{{table.id}}</div>
+  <div class="container w-75 mt-5" id="send_message_div">
+    <label>Напишите комментарий к статье</label>
+    <textarea type="text" name="comment_text" id="send_message_input" class="form-control" rows="3"></textarea>
+    <button onclick="send_message()" class="btn btn-outline-dark m-2">Отправить</button>
+    <!-- <input type="text" value="" id="send_message_input" placeholder="Введите сообщение">
+    <button onclick="send_message()" class="btn btn-outline-success"></button> -->
+  </div>
   <div id="chatdiv37">
+    {{forum|safe}}
     <!-- тут с помощью js вставится чат когда я это доделаю -->
-    </div>
+  </div>
+  <script src="/static/forum.js"></script>
 </div>
 {% endblock %}
 

@@ -1,0 +1,18 @@
+{% for mes in messages %}
+<div class="container w-75 mt-2">
+  <div class="comment">
+    <div class="comment-header">
+        <span class="username">{{mes.user.name}}</span>
+        <span class="timestamp">{{mes.date}}</span>
+    </div>
+    <div class="comment-body">
+        <p>{{mes.text}}</p>
+    </div>
+    <div class="comment-actions">
+        <button class="btn btn-outline-success">👍 Лайк</button>
+        <button class="btn btn-outline-dark">💬 Ответить</button>
+        <button class="btn btn-outline-danger">🚫 Пожаловаться</button>
+    </div>
+ </div>
+</div>
+{% endfor %}

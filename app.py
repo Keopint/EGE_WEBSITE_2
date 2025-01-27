@@ -6,7 +6,7 @@ import os
 from sqlalchemy import and_, select, asc, desc
 from sqlalchemy.orm import Session
 from database import SessionLocal
-from models import Student, Task, login_manager, Post, Submit
+from models import Student, Task, login_manager, Post, Submit, Message
 from datetime import datetime
 from io import BytesIO
 from fileinput import filename
@@ -362,7 +362,30 @@ def posts():
 @app.route("/posts/<int:id>")
 def post_detail(id):
     table: Post = get_post_by_id(id)
-    return render_template("post.html", table=table, cnt_row=str(table.text).count('\n') + 1)
+    return render_template("post.html", table=table, cnt_row=str(table.text).count('\n') + 1, forum=get_forum(SessionLocal(), table))
+
+def get_forum(db: Session, post: Post):
+    mes = reversed(db.query(Message).filter(Message.post_id == post.id).order_by(Message.date).all())
+    with open("templates/forum.html", encoding='utf-8') as f:
+        template = f.read()
+    return render_template_string(template, messages=mes)
+
+@app.route("/api/forum/<int:post_id>", methods=['GET', 'POST'])
+def api_forum(post_id):
+    db = SessionLocal()
+    post: Post = db.query(Post).get(int(post_id))
+    if request.method == "POST":
+        data = request.json
+        text = data.get('text')
+        mes = Message(post_id=post.id, user_id=current_user.id, text=text)
+        db.add(mes)
+        db.commit()
+    # content-type json
+
+    print("FORUM")
+    print(get_forum(db, post))
+    return jsonify({"data": get_forum(db, post)})
+    return get_forum(db, post)
 
 if __name__ == "__main__":
     app.jinja_env.auto_reload = True

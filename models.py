@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime, Date
+from sqlalchemy import Column, Integer, String, Text, DateTime, Date, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
 from database import Base
 from flask_login import UserMixin, LoginManager
@@ -21,6 +22,17 @@ class Post(Base):
     avatar_name = Column(Text)
     video_link = Column(Text)
     date = Column(DateTime, default=lambda: datetime.utcnow().replace(second=0, microsecond=0))
+
+class Message(Base):
+    __tablename__ = 'Message'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey('Student.id'), nullable=False)
+    post_id = Column(Integer, ForeignKey('Post.id'), nullable=False)
+    user = relationship("Student")
+    post = relationship("Post")
+    text = Column(Text, nullable=False)
+    date = Column(DateTime, default=lambda: datetime.now())
 
 class Teacher(Base):
     __tablename__ = 'Teacher'
