@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="background-color: rgb(246, 246, 246);">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,7 +22,7 @@
     <link rel="stylesheet" href="/static/css/style.css">
     {% block script %}{% endblock %}    
 </head> 
-<body style="background-color: rgb(246, 246, 246); height: 100vh;">
+
 <body style="background-color: rgb(246, 246, 246); height: 100vh">
 
   <header style="display: flex; width: 100vw; justify-content: center;">
@@ -42,7 +42,8 @@
 
         <div class="text-end right_header">
           {% if current_user.is_authenticated %}
-            <a class="uk-link-reset"><img class="be_centered" src="../static/img/avatars/{{ current_user.filename }}" width="50" height="50"></a>
+            <a href="{{url_for('profile')}}"><button type="button" class="btn btn-outline-light me-2">Профиль</button></a>
+            <a class="uk-link-reset"><img class="be_centered" src="../static/img/avatars/{{current_user.avatar}}" width="30" height="30"></a>
             <a class="uk-link-reset"><p class="be_centered">{{ current_user.name }}</p></a>
             <a href="/logout"><button type="button" class="btn btn-outline-light me-2">Выйти</button></a>
           {% else %}
@@ -52,10 +53,8 @@
         </div>
     </div>
   </header>
-
-
-    <div class="mt-5">
-      {% block body %}{% endblock %}
-    </div>
+  <div class="mt-5">
+    {% block body %}{% endblock %}
+  </div>
 </body>
 </html>

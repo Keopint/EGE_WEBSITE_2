@@ -340,6 +340,7 @@ def post_update(id):
         if "send_post" in request.form:
             name = request.form['name']
             text = request.form['text']
+            text = markdown_to_html(text)
             image = request.files['file']
             avatar_name = renamed_file(image.filename)
             video_link = request.form["video_link"]

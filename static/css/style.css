@@ -51,6 +51,13 @@ header {
   gap: 10px;
 }
 
+body {
+  height: 100%; /* Устанавливаем высоту для html и body */
+}
+body {
+  background-color: rgb(246, 246, 246); /* Цвет фона для наглядности */
+}
+
 /**/
 
 a {
