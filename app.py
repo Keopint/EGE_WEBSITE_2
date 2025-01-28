@@ -158,6 +158,9 @@ def delete_post(id):
                 file_path = f"static/img/posts_img/{post.avatar_name}"
                 if os.path.exists(file_path):
                     os.remove(file_path) 
+            messages = db.query(Message).filter(Message.post_id == post.id).order_by(Message.date).all()
+            for mes in messages:
+                db.delete(mes)
             db.delete(post)
             db.commit()
         finally:
