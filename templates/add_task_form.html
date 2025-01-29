@@ -5,6 +5,37 @@
 {% endblock %}
 
 {% block script %}
+<script>
+    // Пример на JavaScript для добавления тегов
+    function addTag() {
+        const tagInput = document.getElementById('tag-input');
+        const tagsContainer = document.getElementById('tags-container');
+        const tagsInput = document.getElementById('tags-input');
+    
+        if (tagInput.value.trim() !== "") {
+            const tag = document.createElement('span');
+            tag.className = 'badge bg-secondary me-1';
+            tag.textContent = tagInput.value;
+    
+            // Добавление тега в скрытое поле
+            if (tagsInput.value) {
+                tagsInput.value += ',' + tagInput.value; // Добавление тега в строку
+            } else {
+                tagsInput.value = tagInput.value; // Первый тег
+            }
+    
+            tag.onclick = function() {
+                tagsContainer.removeChild(tag);
+                // Удаление тега из скрытого поля
+                const currentTags = tagsInput.value.split(',').filter(t => t !== tagInput.value);
+                tagsInput.value = current
+            };
+            
+            tagsContainer.appendChild(tag);
+            tagInput.value = "";
+        };
+    };
+</script>
 {% endblock %}
 
 {% block body %} 
@@ -25,6 +56,12 @@
                 <input type="file" name="file" id="file" class="form-control ms-2" style="width: 29%"/>
             </div>
             <textarea name="solution" id="solution" class="mt-2" style="width: 100%; height:20vh;" placeholder="Решение(если нужно)"></textarea>
+            <div class="mt-2">
+                <label for="tag-input">Теги:</label>
+                <div id="tags-container" class="mb-2"></div>
+                <input type="text" id="tag-input" class="form-control" placeholder="Введите тег и нажмите Enter" onkeypress="if(event.key === 'Enter') { event.preventDefault(); addTag(); }"/>
+                <input type="hidden" name="tags" id="tags-input" />
+            </div>
             <div class="text-center">
                 <button type="submit" class="btn btn-outline-dark mt-2" style="width: 30%;">Добавить</button>
             </div>

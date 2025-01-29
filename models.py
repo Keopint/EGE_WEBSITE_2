@@ -112,10 +112,16 @@ class Test(Base):
     time = Column(DateTime, nullable=False)
     attemps_count = Column(Integer, nullable=False)
     task_count = Column(Integer, nullable=False)
+    
+class Tag(Base):
+    __tablename__ = 'tags'  # Убедитесь, что имя таблицы совпадает
+    id = Column(Integer, primary_key=True)
+    name = Column(String, unique=True, nullable=False)
+
+    tasks = relationship('Task', secondary='task_tags', back_populates='tags')
 
 class Task(Base):
-    __tablename__ = 'Task'
-
+    __tablename__ = 'tasks'
     id = Column(Integer, primary_key=True, autoincrement=True)
     source = Column(Text, nullable=False)
     statement = Column(Text, nullable=False)
@@ -123,7 +129,15 @@ class Task(Base):
     answer = Column(Integer, nullable=False)
     solution = Column(Text, nullable=False)
     difficulty = Column(Integer, nullable=False)
-    file_name = Column(String, )
+    file_name = Column(String)
+    solution = Column(String)
+
+    tags = relationship('Tag', secondary='task_tags', back_populates='tasks')
+
+class TaskTag(Base):
+    __tablename__ = 'task_tags'
+    task_id = Column(Integer, ForeignKey('tasks.id'), primary_key=True)
+    tag_id = Column(Integer, ForeignKey('tags.id'), primary_key=True)
 
 class test_task(Base):
     __tablename__ = 'test_task'
@@ -131,7 +145,6 @@ class test_task(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     test_id = Column(Integer, nullable=False)
     task_id = Column(Integer, nullable=False)
-
 
 class Submit(Base):
     __tablename__ = 'Submit'

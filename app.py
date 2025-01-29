@@ -6,7 +6,7 @@ import os
 from sqlalchemy import and_, select, asc, desc
 from sqlalchemy.orm import Session
 from database import SessionLocal
-from models import Student, Task, login_manager, Post, Submit, Message
+from models import Student, Task, login_manager, Post, Submit, Message, Tag, TaskTag
 from datetime import datetime
 from io import BytesIO
 from fileinput import filename
@@ -38,7 +38,7 @@ def add_render_arguments_decorator(func):
 render_template = add_render_arguments_decorator(render_template)
 # сделал подставление current_user в render templates
 
-def add_task(source: str, statement: str,  number: int, difficulty: int, answer: int, file_name: str, solution: str = "NO"):
+def add_task(source: str, statement: str,  number: int, difficulty: int, answer: int, file_name: str, tags, solution: str = "NO"):
     db = SessionLocal()
     try:
         new_task = Task(
@@ -51,6 +51,19 @@ def add_task(source: str, statement: str,  number: int, difficulty: int, answer:
             file_name = file_name
             )
         db.add(new_task)
+        db.commit()
+        for tag_name in tags:
+            tag_name = tag_name.strip()  # Удаляем пробелы
+            if tag_name:  # Проверяем, что тег не пустой
+                tag = db.query(Tag).filter_by(name=tag_name).first()
+                if not tag: 
+                    tag = Tag(name=tag_name)
+                    db.add(tag)
+                    db.commit()  # Сохраняем тег в БД
+                
+                # Создание связи между заданием и тегом
+                task_tag = TaskTag(task_id=new_task.id, tag_id=tag.id)
+                db.add(task_tag)
         db.commit()
     finally:
         db.close()
@@ -216,7 +229,9 @@ def add_task_form():
         filename = renamed_file(f.filename)
         if len(filename) != 0:
             f.save(f"static/img/{filename}")
-        add_task(source, statement, number, difficulty, answer, filename, solution)
+            
+        tags = request.form.get('tags').split(',') 
+        add_task(source, statement, number, difficulty, answer, filename, tags, solution)
         return render_template("success_task_add.html")
     return render_template("add_task_form.html")
 
