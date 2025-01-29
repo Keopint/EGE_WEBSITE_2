@@ -103,9 +103,21 @@ def authorize(email: str, password: str):
 def get_tasks(number_array, difficulty):
     db = SessionLocal()
     try:
-        return db.query(Task).filter(and_(Task.number.in_(number_array), Task.difficulty.in_(difficulty))).order_by(Task.number).all()
+        tasks = db.query(Task).filter(and_(Task.number.in_(number_array), Task.difficulty.in_(difficulty))).order_by(Task.number).all()
     finally:
         db.close()
+    return tasks
+
+def get_tags(number_array, difficulty):
+    db = SessionLocal()
+    tags_for_tasks = []
+    try:
+        tasks = db.query(Task).filter(and_(Task.number.in_(number_array), Task.difficulty.in_(difficulty))).order_by(Task.number).all()
+        for task in tasks:
+            tags_for_tasks.append([tag.name for tag in task.tags])
+    finally:
+        db.close()
+    return tags_for_tasks
 
 def get_user_by_email(email):
     db = SessionLocal()
@@ -213,8 +225,17 @@ def tasks():
             else:
                  checkbox_difficulty_checked[i] = False
 
-    tasks = get_tasks(number_array, difficulty)
-    return render_template("tasks.html", tasks = tasks, checkbox_task_checked = checkbox_task_checked, checkbox_difficulty_checked = checkbox_difficulty_checked)
+    tasks_without_tags = get_tasks(number_array, difficulty)
+    tags_for_tasks = get_tags(number_array, difficulty)
+
+    tasks = []
+
+    for i in range(len(tasks_without_tags)):
+        tasks.append([tasks_without_tags[i], tags_for_tasks[i]])
+
+    return render_template("tasks.html", tasks = tasks, 
+                           checkbox_task_checked = checkbox_task_checked, 
+                           checkbox_difficulty_checked = checkbox_difficulty_checked)
 
 @app.route("/add_task_form", methods=['GET', 'POST'])
 def add_task_form():
