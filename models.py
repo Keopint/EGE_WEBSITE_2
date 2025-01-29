@@ -124,6 +124,7 @@ class Task(Base):
     solution = Column(Text, nullable=False)
     difficulty = Column(Integer, nullable=False)
     file_name = Column(String, )
+    author = Column(Integer)
 
 class test_task(Base):
     __tablename__ = 'test_task'

@@ -42,13 +42,14 @@ def add_task(source: str, statement: str,  number: int, difficulty: int, answer:
     db = SessionLocal()
     try:
         new_task = Task(
-            source = source,
+            source=source,
             statement=statement, 
             number=number, 
-            answer = answer,
-            solution = solution,
+            answer=answer,
+            solution=solution,
             difficulty=difficulty,
-            file_name = file_name
+            file_name=file_name,
+            author=current_user.id
             )
         db.add(new_task)
         db.commit()
@@ -218,6 +219,8 @@ def add_task_form():
             f.save(f"static/img/{filename}")
         add_task(source, statement, number, difficulty, answer, filename, solution)
         return render_template("success_task_add.html")
+    if current_user.is_anonymous:
+        return redirect(url_for('login_form'))
     return render_template("add_task_form.html")
 
 @app.route("/register_choice", methods=['GET', 'POST'])
