@@ -23,6 +23,23 @@ class Post(Base):
     video_link = Column(Text)
     date = Column(DateTime, default=lambda: datetime.utcnow().replace(second=0, microsecond=0))
 
+class Pitch(Base):
+    __tablename__ = 'Pitch'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(Text, nullable=False)
+    avatar_name = Column(Text)
+    date = Column(DateTime, default=lambda: datetime.utcnow().replace(second=0, microsecond=0))
+    images = relationship("PitchImg", back_populates="pitch")
+
+class PitchImg(Base):
+    __tablename__ = 'PitchImg'
+
+    id = Column(Integer, primary_key=True)
+    pitch_id = Column(Integer, ForeignKey("Pitch.id"), nullable=False)
+    url = Column(Text, nullable=False)
+    pitch = relationship("Pitch", back_populates="images")
+
 class Message(Base):
     __tablename__ = 'Message'
 

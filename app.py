@@ -6,7 +6,7 @@ import os
 from sqlalchemy import and_, select, asc, desc
 from sqlalchemy.orm import Session
 from database import SessionLocal
-from models import Student, Task, login_manager, Post, Submit, Message
+from models import Student, Task, login_manager, Post, Submit, Message, Pitch, PitchImg
 from datetime import datetime
 from io import BytesIO
 from fileinput import filename
@@ -166,6 +166,16 @@ def get_posts():
     db = SessionLocal()
     try:
         posts = db.query(Post).order_by(desc(Post.id)).all()
+    finally:
+        db.close()
+    if len(posts) == 0:
+        return []
+    return posts
+
+def get_pitches():
+    db = SessionLocal()
+    try:
+        posts = db.query(Pitch).order_by(desc(Pitch.id)).all()
     finally:
         db.close()
     if len(posts) == 0:
@@ -359,6 +369,11 @@ def posts():
     tables = get_posts()
     return render_template("posts.html", tables=tables)
 
+@app.route("/pitches")
+def pitches():
+    tables = get_pitches()
+    return render_template("pitches.html", tables=tables)
+
 @app.route("/posts/<int:id>")
 def post_detail(id):
     table: Post = get_post_by_id(id)
@@ -385,7 +400,13 @@ def api_forum(post_id):
     print("FORUM")
     print(get_forum(db, post))
     return jsonify({"data": get_forum(db, post)})
-    return get_forum(db, post)
+
+@app.route("/pitch/<int:id>")
+def watch_pitch(id):
+    with SessionLocal() as db:
+        pitch = db.query(Pitch).filter(Pitch.id==id).first()
+        images = db.query(PitchImg).filter(PitchImg.pitch_id==id).order_by(PitchImg.id).all()
+    return render_template("pitch.html", pitch=pitch, images=images)
 
 if __name__ == "__main__":
     app.jinja_env.auto_reload = True
