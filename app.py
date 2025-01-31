@@ -53,7 +53,7 @@ def add_task(source: str, statement: str,  number: int, difficulty: int, answer:
         db.add(new_task)
         db.commit()
         for tag_name in tags:
-            tag_name = tag_name.strip()  # Удаляем пробелы
+            tag_name = tag_name.strip().lower()  # Удаляем пробелы
             if tag_name:  # Проверяем, что тег не пустой
                 tag = db.query(Tag).filter_by(name=tag_name).first()
                 if not tag: 
@@ -99,20 +99,40 @@ def authorize(email: str, password: str):
             return True
     return False
 
+def is_subarray(arr1, arr2):  # Создаём копию, чтобы не изменять исходный массив
+    for elem in arr1:
+        if elem not in arr2:
+            return False # Удаляем найденный элемент
+    return True
 
-def get_tasks(number_array, difficulty):
+def get_tasks(number_array, difficulty, tags):
     db = SessionLocal()
     try:
-        tasks = db.query(Task).filter(and_(Task.number.in_(number_array), Task.difficulty.in_(difficulty))).order_by(Task.number).all()
+        tasks = []
+        if len(tags) > 0:
+            without_tags_tasks = db.query(Task).filter(and_(Task.number.in_(number_array), Task.difficulty.in_(difficulty))).order_by(Task.number).all()
+            for t in without_tags_tasks:
+                print(tags, [tag.name for tag in t.tags])
+                if is_subarray(tags, [tag.name for tag in t.tags]):
+                    tasks.append(t)
+        else:
+             tasks = db.query(Task).filter(and_(Task.number.in_(number_array), Task.difficulty.in_(difficulty))).order_by(Task.number).all()
     finally:
         db.close()
     return tasks
 
-def get_tags(number_array, difficulty):
+def get_tags(number_array, difficulty, tags):
     db = SessionLocal()
     tags_for_tasks = []
     try:
-        tasks = db.query(Task).filter(and_(Task.number.in_(number_array), Task.difficulty.in_(difficulty))).order_by(Task.number).all()
+        tasks = []
+        if len(tags) > 0:
+            without_tags_tasks = db.query(Task).filter(and_(Task.number.in_(number_array), Task.difficulty.in_(difficulty))).order_by(Task.number).all()
+            for t in without_tags_tasks:
+                if is_subarray(tags, [tag.name for tag in t.tags]):
+                    tasks.append(t)
+        else:
+             tasks = db.query(Task).filter(and_(Task.number.in_(number_array), Task.difficulty.in_(difficulty))).order_by(Task.number).all()
         for task in tasks:
             tags_for_tasks.append([tag.name for tag in task.tags])
     finally:
@@ -211,9 +231,14 @@ def tasks():
     difficulty = list(range(0, 3))
     checkbox_task_checked = [True] * 28
     checkbox_difficulty_checked = [True] * 3
+    tags = []
     if request.method == "POST":
         number_array.clear()
         difficulty.clear()
+        tags = request.form["tags"].split(',')
+        for i in range(len(tags)):
+            tags[i] = tags[i].strip().lower()
+        print(tags)
         for i in range(1, 28):  
             if f"checkbox_task_{i}" in request.form:
                 number_array.append(i)
@@ -225,13 +250,17 @@ def tasks():
             else:
                  checkbox_difficulty_checked[i] = False
 
-    tasks_without_tags = get_tasks(number_array, difficulty)
-    tags_for_tasks = get_tags(number_array, difficulty)
+    tasks_without_tags = get_tasks(number_array, difficulty, tags)
+    tags_for_tasks = get_tags(number_array, difficulty, tags)
 
     tasks = []
 
+    for t in tasks_without_tags:
+        print(t.id)
+
     for i in range(len(tasks_without_tags)):
         tasks.append([tasks_without_tags[i], tags_for_tasks[i]])
+
 
     return render_template("tasks.html", tasks = tasks, 
                            checkbox_task_checked = checkbox_task_checked, 
