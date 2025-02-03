@@ -53,7 +53,7 @@ def add_tasks():
             new_task.source = "kompege.ru"
             new_task.number = int(e["type"])
             new_task.answer = int(e["ans"])
-            new_task.statement = e["descr"]
+            new_task.statement = str(e["descr"]).replace('\n', '<br>')
             new_task.difficulty = random.randint(0, 2)
             new_task.solution = "No"
             if "file" in e.keys():

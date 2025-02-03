@@ -270,7 +270,7 @@ def tasks():
 def add_task_form():
     if request.method == "POST":
         source = request.form["source"]
-        statement = request.form["statement"]
+        statement = str(request.form["statement"]).replace('\n', '<br>')
         number = int(request.form["number"])
         difficulty = int(request.form.get("select_difficulty"))
         answer = int(request.form["answer"])
