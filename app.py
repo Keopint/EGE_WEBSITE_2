@@ -117,7 +117,7 @@ def get_tasks(number_array, difficulty, tags):
                 if is_subarray(tags, [tag.name for tag in t.tags]):
                     tasks.append(t)
         else:
-             tasks = db.query(Task).filter(and_(Task.number.in_(number_array), Task.difficulty.in_(difficulty))).order_by(Task.number).all()
+             tasks = db.query(Task).options(joinedload(Task.student)).filter(and_(Task.number.in_(number_array), Task.difficulty.in_(difficulty))).order_by(Task.number).all()
     finally:
         db.close()
     return tasks

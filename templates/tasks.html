@@ -98,13 +98,7 @@
                         <div class="d-flex align-items-center">
                             <span class="fw-bold text-secondary me-1">Сложность:</span>
                             <span>
-                                {% if task.difficulty == 0 %}
-                                    Легкая
-                                {% elif task.difficulty == 1 %}
-                                    Нормальная
-                                {% else %}
-                                    Сложная
-                                {% endif %}
+                                {{ task.difficulty }}
                             </span>
                         </div>
                     </div>
@@ -112,16 +106,7 @@
                     <!-- Текст задания -->
                     <p class="mt-2">{{ task.statement }}</p>
 
-                    <!-- Файлы -->
-                    {% if task.file_name %}
-                        {% if task.file_name[-3:] == "png" or task.file_name[-4:] == "jpeg" %}
-                            <img src="/static/img/{{task.file_name}}" class="img-fluid m-2" alt="..." width="40%">
-                        {% elif task.file_name[-3:] == "txt" or task.file_name[-3:] == "xls" or task.file_name[-4:] == "xlsx" %}
-                            <a href="/static/img/{{task.file_name}}" class="btn btn-outline-secondary btn-sm mt-2" download>
-                                <i class="bi bi-download"></i> Скачать файл
-                            </a>
-                        {% endif %}
-                    <p><b>({{task["source"]}}) №{{task["number"]}} Сложность:{{task["difficulty"]}}</b> <br>{{task["statement"]|safe}}</p>
+<!--                    <p><b>({{task["source"]}}) №{{task["number"]}} Сложность:{{task["difficulty"]}}</b> <br>{{task["statement"]|safe}}</p>-->
                     {% if task.file_name == None %}
                     {% elif task.file_name[-3:] == "png" or task.file_name[-3:] == "jpg" %}
                         <img src="/static/img/{{task.file_name}}" class="img-fluid m-2" alt="..." width="40%">

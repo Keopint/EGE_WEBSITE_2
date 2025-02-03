@@ -23,8 +23,8 @@ class Post(Base):
     avatar_name = Column(Text)
     video_link = Column(Text)
     date = Column(DateTime, default=lambda: datetime.utcnow().replace(second=0, microsecond=0))
-    author = Column(Integer, ForeignKey('Student.id'))  # Изменяем тип и добавляем ForeignKey
-    student = relationship("Student")  # Добавляем отношение
+    author = Column(Integer, ForeignKey('Student.id'))
+    student = relationship("Student")
 
 class Message(Base):
     __tablename__ = 'Message'
