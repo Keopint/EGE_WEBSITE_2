@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block body %}
+<title>Wheel</title>
+<div class="main">
+    <style>
+        canvas {
+            /* border: 1px solid black; */
+            display: block;
+            margin: 0 auto;
+            width: 99%;
+            height: 99%;
+        }
+        #roll_button {
+            background-color: #dd3a3a;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+        #roll_button:disabled {
+            opacity: 0.6;
+        }
+    </style>
+    <h1 id="roll_text" style="text-align: center;">Roll the wheel</h1>
+    <canvas id="canvas"></canvas>
+    <div style="text-align: center;">
+        <button id="roll_button" onclick="rollWheel();">Roll</button>
+    </div>
+    <script>
+        rewardId = 1;
+        startAngle = 10;
+        AngleG = -0.05;
+        startAngleM = 20;
+    
+        angleM = startAngleM;
+        angle = startAngle;
+    
+        sectorsArray = [["diamonds", 10, "#cc5859"],
+        ["diamonds", 10, "#cc5859"],
+        ["diamonds", 20, "#cc5859"],
+        ["diamonds", 20, "#cc5859"]];
+    
+        sectors = sectorsArray.length;
+        sectorAngle = 360 / sectors;
+    </script>
+    <script src="../static/roll_wheel.js"></script>
+</div>
+{% endblock %}

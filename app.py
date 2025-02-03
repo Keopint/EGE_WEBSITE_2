@@ -408,6 +408,20 @@ def watch_pitch(id):
         images = db.query(PitchImg).filter(PitchImg.pitch_id==id).order_by(PitchImg.id).all()
     return render_template("pitch.html", pitch=pitch, images=images)
 
+@app.route("/wheel")
+def roll_wheel():
+    reward = {
+        "id": 0,
+        "w_start_angle": 1,
+        "w_start_g": 1,
+        "w_start_speed": 1,
+        "wheel": [["diamonds", 10, "#cc5859"],
+        ["diamonds", 10, "#cc5859"],
+        ["diamonds", 20, "#cc5859"],
+        ["diamonds", 20, "#cc5859"]]
+    }
+    return render_template("wheel_copy.html")
+
 if __name__ == "__main__":
     app.jinja_env.auto_reload = True
     app.config['TEMPLATES_AUTO_RELOAD'] = True

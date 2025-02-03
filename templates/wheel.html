@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<title>Wheel</title>
+<div class="main">
+    <style>
+        canvas {
+            border: 1px solid black;
+            display: block;
+            margin: 0 auto;
+            width: 99%;
+            height: 99%;
+        }
+        #roll_button {
+            background-color: #dd3a3a;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+        #roll_button:disabled {
+            opacity: 0.6;
+        }
+    </style>
+    <h1 id="roll_text" style="text-align: center;">Roll the wheel</h1>
+    <canvas id="canvas"></canvas>
+    <div style="text-align: center;">
+        {% if reward.taken %}   
+            <button id="roll_button" disabled="true">Roll</button>
+        {% else %}
+            <button id="roll_button" onclick="rollWheel();">Roll</button>
+        {% endif %}
+    </div>
+    <script>
+        rewardId = {{ reward["id"] }}
+    
+        startAngle = {{ reward["w_start_angle"] }};
+        AngleG = {{ reward["w_start_g"] }};
+        startAngleM = {{ reward["w_start_speed"] }};
+    
+        angleM = startAngleM;
+        angle = startAngle;
+    
+        sectorsArray = {{ reward["wheel"]|tojson }}
+    
+        sectors = sectorsArray.length;
+        sectorAngle = 360 / sectors;
+    </script>
+    <script src="../static/js/roll_wheel.js"></script>
+    {% if reward.taken %}
+        <script>rollFullWheel();</script>
+    {% endif %}
+</div>
+{% endblock %}
