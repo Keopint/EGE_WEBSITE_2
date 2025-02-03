@@ -43,7 +43,7 @@ def add_render_arguments_decorator(func):
 render_template = add_render_arguments_decorator(render_template)
 # сделал подставление current_user в render templates
 
-def add_task(source: str, statement: str,  number: int, difficulty: str, answer: int, file_name: str, tags, solution: str = "NO"):
+def add_task(source: str, statement: str,  number: int, difficulty: int, answer: int, file_name: str, tags, solution: str = "NO"):
     db = SessionLocal()
     try:
         new_task = Task(
@@ -116,13 +116,12 @@ def get_tasks(number_array, difficulty, tags):
     try:
         tasks = []
         if len(tags) > 0:
-            without_tags_tasks = db.query(Task).filter(and_(Task.number.in_(number_array), Task.difficulty.in_(difficulty))).order_by(Task.number).all()
+            without_tags_tasks = db.query(Task).filter(and_(Task.number.in_(number_array), Task.difficulty.in_(difficulty))).order_by(Task.number).options(joinedload(Task.student)).all()
             for t in without_tags_tasks:
-                print(tags, [tag.name for tag in t.tags])
                 if is_subarray(tags, [tag.name for tag in t.tags]):
                     tasks.append(t)
         else:
-             tasks = db.query(Task).options(joinedload(Task.student)).filter(and_(Task.number.in_(number_array), Task.difficulty.in_(difficulty))).order_by(Task.number).all()
+            tasks = db.query(Task).filter(and_(Task.number.in_(number_array), Task.difficulty.in_(difficulty))).order_by(Task.number).options(joinedload(Task.student)).all()
     finally:
         db.close()
     return tasks
@@ -133,12 +132,12 @@ def get_tags(number_array, difficulty, tags):
     try:
         tasks = []
         if len(tags) > 0:
-            without_tags_tasks = db.query(Task).filter(and_(Task.number.in_(number_array), Task.difficulty.in_(difficulty))).order_by(Task.number).all()
+            without_tags_tasks = db.query(Task).filter(and_(Task.number.in_(number_array), Task.difficulty.in_(difficulty))).order_by(Task.number).options(joinedload(Task.student)).all()
             for t in without_tags_tasks:
                 if is_subarray(tags, [tag.name for tag in t.tags]):
                     tasks.append(t)
         else:
-             tasks = db.query(Task).filter(and_(Task.number.in_(number_array), Task.difficulty.in_(difficulty))).order_by(Task.number).all()
+             tasks = db.query(Task).filter(and_(Task.number.in_(number_array), Task.difficulty.in_(difficulty))).order_by(Task.number).options(joinedload(Task.student)).all()
         for task in tasks:
             tags_for_tasks.append([tag.name for tag in task.tags])
     finally:
@@ -259,7 +258,8 @@ def main_page():
 @app.route("/tasks", methods=['GET', 'POST'])    
 def tasks():
     number_array = list(range(1, 28))
-    difficulty = ["Легкая", "Нормальная", "Сложная"]
+    difficulty_names = ["Легкая", "Нормальная", "Сложная"]
+    difficulty = list(range(0, 3))
     checkbox_task_checked = [True] * 28
     checkbox_difficulty_checked = [True] * 3
     tags = []
@@ -279,7 +279,7 @@ def tasks():
             if f"difficulty_{i}" in request.form:
                 difficulty.append(i)
             else:
-                 checkbox_difficulty_checked[i] = False
+                checkbox_difficulty_checked[i] = False
 
     tasks_without_tags = get_tasks(number_array, difficulty, tags)
     tags_for_tasks = get_tags(number_array, difficulty, tags)
@@ -295,7 +295,8 @@ def tasks():
 
     return render_template("tasks.html", tasks = tasks, 
                            checkbox_task_checked = checkbox_task_checked, 
-                           checkbox_difficulty_checked = checkbox_difficulty_checked)
+                           checkbox_difficulty_checked = checkbox_difficulty_checked,
+                           difficulty_names = difficulty_names)
 
 @app.route("/add_task_form", methods=['GET', 'POST'])
 def add_task_form():
@@ -303,7 +304,7 @@ def add_task_form():
         source = request.form["source"]
         statement = str(request.form["statement"]).replace('\n', '<br>')
         number = int(request.form["number"])
-        difficulty = request.form.get("select_difficulty")
+        difficulty = int(request.form.get("select_difficulty"))
         answer = int(request.form["answer"])
         solution = request.form["solution"]
         f = request.files['file']

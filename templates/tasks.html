@@ -98,13 +98,13 @@
                         <div class="d-flex align-items-center">
                             <span class="fw-bold text-secondary me-1">Сложность:</span>
                             <span>
-                                {{ task.difficulty }}
+                                {{ difficulty_names[task.difficulty]}}
                             </span>
                         </div>
                     </div>
 
                     <!-- Текст задания -->
-                    <p class="mt-2">{{ task.statement }}</p>
+                    <p class="mt-2">{{ task.statement|safe}}</p>
 
 <!--                    <p><b>({{task["source"]}}) №{{task["number"]}} Сложность:{{task["difficulty"]}}</b> <br>{{task["statement"]|safe}}</p>-->
                     {% if task.file_name == None %}
