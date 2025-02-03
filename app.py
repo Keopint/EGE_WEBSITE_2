@@ -38,7 +38,7 @@ def add_render_arguments_decorator(func):
 render_template = add_render_arguments_decorator(render_template)
 # сделал подставление current_user в render templates
 
-def add_task(source: str, statement: str,  number: int, difficulty: int, answer: int, file_name: str, tags, solution: str = "NO"):
+def add_task(source: str, statement: str,  number: int, difficulty: str, answer: int, file_name: str, tags, solution: str = "NO"):
     db = SessionLocal()
     try:
         new_task = Task(
@@ -228,7 +228,7 @@ def main_page():
 @app.route("/tasks", methods=['GET', 'POST'])    
 def tasks():
     number_array = list(range(1, 28))
-    difficulty = list(range(0, 3))
+    difficulty = ["Легкая", "Нормальная", "Сложная"]
     checkbox_task_checked = [True] * 28
     checkbox_difficulty_checked = [True] * 3
     tags = []
@@ -272,7 +272,7 @@ def add_task_form():
         source = request.form["source"]
         statement = str(request.form["statement"]).replace('\n', '<br>')
         number = int(request.form["number"])
-        difficulty = int(request.form.get("select_difficulty"))
+        difficulty = request.form.get("select_difficulty")
         answer = int(request.form["answer"])
         solution = request.form["solution"]
         f = request.files['file']

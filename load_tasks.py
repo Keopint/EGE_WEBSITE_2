@@ -54,7 +54,7 @@ def add_tasks():
             new_task.number = int(e["type"])
             new_task.answer = int(e["ans"])
             new_task.statement = str(e["descr"]).replace('\n', '<br>')
-            new_task.difficulty = random.randint(0, 2)
+            new_task.difficulty = "Нормальная"
             new_task.solution = "No"
             if "file" in e.keys():
                 new_task.file_name = e["file"]

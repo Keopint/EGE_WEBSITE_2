@@ -79,7 +79,7 @@
             <h1 align="center" class="pt-2 pb-2">Задачи ЕГЭ</h1>
             {% for task, tags_for_task in tasks %}
                 <div class="task-item border rounded p-3 mb-3">
-                    <p><b>({{task["source"]}}) №{{task["number"]}}</b> <br>{{task["statement"]|safe}}</p>
+                    <p><b>({{task["source"]}}) №{{task["number"]}} Сложность:{{task["difficulty"]}}</b> <br>{{task["statement"]|safe}}</p>
                     {% if task.file_name == None %}
                     {% elif task.file_name[-3:] == "png" or task.file_name[-3:] == "jpg" %}
                         <img src="/static/img/{{task.file_name}}" class="img-fluid m-2" alt="..." width="40%">
