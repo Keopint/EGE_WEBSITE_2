@@ -13,6 +13,7 @@ class Class(Base):
     teacher_id = Column(Integer, nullable=False)
     count_student = Column(Integer, nullable=False)
 
+# models.py
 class Post(Base):
     __tablename__ = 'Post'
 
@@ -22,7 +23,8 @@ class Post(Base):
     avatar_name = Column(Text)
     video_link = Column(Text)
     date = Column(DateTime, default=lambda: datetime.utcnow().replace(second=0, microsecond=0))
-    author = Column(Integer)
+    author = Column(Integer, ForeignKey('Student.id'))  # Изменяем тип и добавляем ForeignKey
+    student = relationship("Student")  # Добавляем отношение
 
 class Message(Base):
     __tablename__ = 'Message'

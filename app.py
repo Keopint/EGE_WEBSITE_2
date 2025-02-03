@@ -133,10 +133,14 @@ def add_post_to_table(name: str,  text: str, avatar_name: str, video_link: str):
 def get_post_by_id(id):
     db = SessionLocal()
     try:
-        q = db.query(Post).get(id)
+        # Используем joinedload для подгрузки связанного студента (автора)
+        post = db.query(Post)\
+                .options(joinedload(Post.student))\
+                .filter(Post.id == id)\
+                .first()
+        return post
     finally:
         db.close()
-    return q
 
 def get_name_by_id(id):
     db = SessionLocal()
@@ -180,12 +184,12 @@ def delete_post(id):
 def get_posts():
     db = SessionLocal()
     try:
-        posts = db.query(Post).order_by(desc(Post.id)).all()
+        posts = db.query(Post).options(joinedload(Post.student)) \
+                             .order_by(desc(Post.id)) \
+                             .all()
+        return posts
     finally:
         db.close()
-    if len(posts) == 0:
-        return []
-    return posts
 
 @app.route('/')
 def main_page():
@@ -384,6 +388,7 @@ def post_detail(id):
     is_author = False
     if (not current_user.is_anonymous) and current_user.id == table.author:
         is_author = True
+    print(table.student)
     return render_template("post.html", table=table, cnt_row=str(table.text).count('\n') + 1, forum=get_forum(SessionLocal(), table), table_text=table_text, is_author=is_author)
 
 def get_forum(db: Session, post: Post):
