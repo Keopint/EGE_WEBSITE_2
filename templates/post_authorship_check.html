@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}
+Доступ запрещен
+{% endblock %}
+
+{% block body %}
+<div class="container w-75 pt-5">
+    <div class="text-center mt-5">
+        <h1 class="mb-4" style="font-size: 2.5rem;">Вы не автор этой статьи, поэтому не можете ее редактировать</h1>
+        <a href="{{ url_for('posts') }}" class="btn btn-lg btn-info">Вернуться к статьям</a>
+    </div>
+</div>
+{% endblock %}

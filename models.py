@@ -22,6 +22,7 @@ class Post(Base):
     avatar_name = Column(Text)
     video_link = Column(Text)
     date = Column(DateTime, default=lambda: datetime.utcnow().replace(second=0, microsecond=0))
+    author = Column(Integer)
 
 class Message(Base):
     __tablename__ = 'Message'
@@ -85,15 +86,18 @@ class Student(UserMixin, Base):
     class_number = Column(Integer, nullable=False)
     avatar = Column(String, nullable=False)
 
+    @property
     def is_authenticated(self):
         return True
-    
+
+    @property
     def is_active(self):
         return True
-    
+
+    @property
     def is_anonymous(self):
         return False
-    
+
     def get_id(self):
         return str(self.id)
 
@@ -124,7 +128,8 @@ class Task(Base):
     solution = Column(Text, nullable=False)
     difficulty = Column(Integer, nullable=False)
     file_name = Column(String, )
-    author = Column(Integer)
+    author = Column(Integer, ForeignKey('Student.id'))  # Добавляем ForeignKey
+    student = relationship("Student")  # Добавляем отношение
 
 class test_task(Base):
     __tablename__ = 'test_task'

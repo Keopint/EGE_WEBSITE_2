@@ -9,8 +9,8 @@
 
 {% block body %}
 <div class="container">
-   <div class="row"> <!-- Устанавливаем высоту для всей строки -->
-        <div class="col-2" style="overflow-y: auto; height: 98vh;"> <!-- Добавляем прокрутку для левой колонки -->
+   <div class="row">
+        <div class="col-2" style="overflow-y: auto; height: 98vh;">
             <form method="POST">
                 <div class="flex-shrink-0 pt-2">
                     <a href="/" class="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
@@ -39,7 +39,7 @@
                         </li>
                         <li class="mb-1">
                             <button style="width: 90%;" type="button" class="btn btn-outline-dark align-items-center rounded" data-bs-toggle="collapse" data-bs-target="#difficulty-collapse" aria-expanded="true">
-                              Cложность
+                              Сложность
                             </button>
                             <div class="collapse" id="difficulty-collapse">
                                 <ul class="btn-toggle-nav list-unstyled fw-normal mt-1 small">
@@ -65,151 +65,112 @@
                 <button type="button" class="btn btn-outline-danger mt-4" onclick="checkAllResponses();" style="width: 90%;">Проверить задания</button>
             </form>
         </div>
-        <div class="col-sm-10" style="overflow-y: auto; height: 85vh;"> <!-- Добавляем прокрутку для правой колонки -->
+        <div class="col-sm-10" style="overflow-y: auto; height: 85vh;">
             <h1 align="center" class="pt-2 pb-2">Задачи ЕГЭ</h1>
             {% for task in tasks %}
                 <div class="task-item border rounded p-3 mb-3">
-                    <p>({{task["source"]}}{% if task["author"] %}, {{task["author"]}}{% endif %}) №{{task["number"]}} {{task["statement"]}}</p>
-                    {% if task.file_name == None %}
-                    {% elif task.file_name[-3:] == "png" or task.file_name[-4:] == "jpeg" %}
-                        <img src="/static/img/{{task.file_name}}" class="img-fluid m-2" alt="..." width="40%">
-                    {% elif task.file_name[-3:] == "txt" or task.file_name[-3:] == "xls" or task.file_name[-4:] == "xlsx" %}
-                        <a href="/static/img/{{task.file_name}}" style="color:black" download>Скачать файл</a>
+                    <!-- Мета-данные задания -->
+                    <div class="d-flex flex-wrap gap-3 bg-light border rounded p-3 mb-3">
+                        <div class="d-flex align-items-center">
+                            <span class="fw-bold text-secondary me-1">Источник:</span>
+                            <span>{{ task.source }}</span>
+                        </div>
+                        {% if task.student %}
+                        <div class="d-flex align-items-center">
+                            <span class="fw-bold text-secondary me-1">Автор:</span>
+                            <span>{{ task.student.name }} {{ task.student.surname }}</span>
+                        </div>
+                        {% endif %}
+                        <div class="d-flex align-items-center">
+                            <span class="fw-bold text-secondary me-1">№ КИМ:</span>
+                            <span>{{ task.number }}</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <span class="fw-bold text-secondary me-1">Сложность:</span>
+                            <span>
+                                {% if task.difficulty == 0 %}
+                                    <i class="bi bi-emoji-smile"></i> Легкая
+                                {% elif task.difficulty == 1 %}
+                                    <i class="bi bi-emoji-neutral"></i> Нормальная
+                                {% else %}
+                                    <i class="bi bi-emoji-frown"></i> Сложная
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Текст задания -->
+                    <p class="mt-2">{{ task.statement }}</p>
+
+                    <!-- Файлы -->
+                    {% if task.file_name %}
+                        {% if task.file_name[-3:] == "png" or task.file_name[-4:] == "jpeg" %}
+                            <img src="/static/img/{{task.file_name}}" class="img-fluid m-2" alt="..." width="40%">
+                        {% elif task.file_name[-3:] == "txt" or task.file_name[-3:] == "xls" or task.file_name[-4:] == "xlsx" %}
+                            <a href="/static/img/{{task.file_name}}" class="btn btn-outline-secondary btn-sm mt-2" download>
+                                <i class="bi bi-download"></i> Скачать файл
+                            </a>
+                        {% endif %}
                     {% endif %}
-                    <div class="row">
+
+                    <!-- Форма ответа -->
+                    <div class="row mt-3">
                         <div id="FORM_div">
                             <form id="responseForm_{{task.id}}" data-answer="{{task.answer}}" onsubmit="return handleSubmit(event, '{{task.id}}', '{{task.answer}}');">
-                                <input type="text" name="userResponse_{{task.id}}" id="userResponse_{{task.id}}" placeholder="Введите ответ">
-                                <button type="submit" class="btn btn-outline-dark">Проверить</button>
-                                <button type="button" class="btn btn-outline-dark" onclick="toggleAnswer('answer_{{task.id}}')" style="width: 15%;">Показать ответ</button>
+                                <input type="text" name="userResponse_{{task.id}}" id="userResponse_{{task.id}}" placeholder="Введите ответ" class="form-control-sm">
+                                <button type="submit" class="btn btn-outline-dark btn-sm">Проверить</button>
+                                <button type="button" class="btn btn-outline-dark btn-sm" onclick="toggleAnswer('answer_{{task.id}}')">Показать ответ</button>
                             </form>
                         </div>
-                        <div id="result_{{task.id}}" class="result"></div>
-                        <div id="answer_{{task.id}}" class="answer" style="width: 4%;">{{ task.answer }}</div>
+                        <div id="result_{{task.id}}" class="result mt-2"></div>
+                        <div id="answer_{{task.id}}" class="answer mt-2" style="display: none;">{{ task.answer }}</div>
                     </div>
                 </div>
-                <br>
             {% endfor %}
             <button type="button" class="btn btn-outline-dark mb-3" onclick="checkAllResponses();">Проверить все</button>
         </div>
    </div>
 </div>
-<script>
-    // Функция для обработки отправки формы
-    function handleSubmit(event, taskId, taskAnswer) {
-        event.preventDefault(); // Предотвращаем стандартное поведение формы
 
+<script>
+    function handleSubmit(event, taskId, taskAnswer) {
+        event.preventDefault();
         const userResponse = document.getElementById(`userResponse_${taskId}`).value;
         const resultDiv = document.getElementById(`result_${taskId}`);
         const inputField = document.getElementById(`userResponse_${taskId}`);
 
-        // Отправка данных на сервер
         fetch('/check_answer', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                task_id: taskId,
-                user_response: userResponse,
-                task_answer: taskAnswer
-            })
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({task_id: taskId, user_response: userResponse, task_answer: taskAnswer})
         })
         .then(response => response.json())
         .then(data => {
             if (data.status === "success") {
-                // Проверка ответа
                 if (userResponse.trim().toLowerCase() === taskAnswer.toLowerCase()) {
-                    resultDiv.innerText = "Ответ верный!";
-                    resultDiv.style.color = "green";
-                    inputField.style.backgroundColor = "lightgreen";
+                    resultDiv.innerHTML = '<i class="bi bi-check-circle-fill text-success"></i> Верно!';
+                    inputField.style.backgroundColor = "#e6ffe6";
                 } else {
-                    resultDiv.innerText = "Ответ неверный. Попробуйте еще раз.";
-                    resultDiv.style.color = "red";
-                    inputField.style.backgroundColor = "lightcoral";
+                    resultDiv.innerHTML = '<i class="bi bi-x-circle-fill text-danger"></i> Неверно!';
+                    inputField.style.backgroundColor = "#ffe6e6";
                 }
             }
         })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-
-        return false; // Возвращаем false, чтобы предотвратить перезагрузку страницы
+        .catch(console.error);
+        return false;
     }
 
     function toggleAnswer(answerId) {
         const answerDiv = document.getElementById(answerId);
-        if (answerDiv.style.display === "none" || answerDiv.style.display === "") {
-            answerDiv.style.display = "block"; // Показываем ответ
-        } else {
-            answerDiv.style.display = "none"; // Скрываем ответ
-        }
+        answerDiv.style.display = answerDiv.style.display === "none" ? "block" : "none";
     }
 
-    // Функция для проверки всех ответов
     function checkAllResponses() {
-        const forms = document.querySelectorAll('form');
-
-        if (forms.length === 0) {
-            alert("Формы не найдены!"); // Сообщение об ошибке
-            return; // Выход из функции, если формы не найдены
-        }
-
-        forms.forEach(form => {
-            const taskId = form.id.split('_')[1]; // Получаем номер задачи
-            const userResponse = document.getElementById(`userResponse_${taskId}`);
-            const resultDiv = document.getElementById(`result_${taskId}`);
-            const taskAnswer = form.getAttribute('data-answer');
-
-            if (!userResponse || !resultDiv) {
-                console.error(`Элементы для задачи №${taskId} не найдены!`); // Сообщение об ошибке
-                return; // Выход из цикла, если элементы не найдены
-            }
-
-            console.log(`Задача №${taskId} - Пользовательский ответ: ${userResponse.value}, Правильный ответ: ${taskAnswer}`);
-
-            // Отправка данных на сервер
-            fetch('/check_answer', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    task_id: taskId,
-                    user_response: userResponse.value,
-                    task_answer: taskAnswer
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === "success") {
-                    if (userResponse.value.trim().toLowerCase() === taskAnswer.toLowerCase()) {
-                        resultDiv.innerText = "Ответ верный!";
-                        resultDiv.style.color = "green";
-                        userResponse.style.backgroundColor = "lightgreen";
-                    } else {
-                        resultDiv.innerText = "Ответ неверный. Попробуйте еще раз.";
-                        resultDiv.style.color = "red";
-                        userResponse.style.backgroundColor = "lightcoral";
-                    }
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
+        document.querySelectorAll('form').forEach(form => {
+            const event = new Event('submit');
+            form.dispatchEvent(event);
         });
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        return;
-    }
-
-    function downloadFile(filename) {
-        // Создаем ссылку для скачивания
-        const link = document.createElement('a');
-        link.href = `/download/${filename}`;
-        link.download = filename; // Указываем имя файла для скачивания
-        document.body.appendChild(link);
-        link.click(); // Программно кликаем по ссылке
-        document.body.removeChild(link); // Удаляем ссылку из документа
+        window.scrollTo({top: 0, behavior: 'smooth'});
     }
 </script>
 {% endblock %}

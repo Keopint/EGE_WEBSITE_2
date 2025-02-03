@@ -4,7 +4,7 @@ from flask import (Flask, render_template, request, redirect,
 from flask_login import current_user, login_user, logout_user
 import os
 from sqlalchemy import and_, select, asc, desc
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from database import SessionLocal
 from models import Student, Task, login_manager, Post, Submit, Message
 from datetime import datetime
@@ -91,7 +91,16 @@ def authorize(email: str, password: str):
 def get_tasks(number_array, difficulty):
     db = SessionLocal()
     try:
-        return db.query(Task).filter(and_(Task.number.in_(number_array), Task.difficulty.in_(difficulty))).order_by(Task.number).all()
+        return (
+            db.query(Task)
+            .options(joinedload(Task.student))
+            .filter(and_(
+                Task.number.in_(number_array),
+                Task.difficulty.in_(difficulty)
+            ))
+            .order_by(Task.number)
+            .all()
+        )
     finally:
         db.close()
 
@@ -113,7 +122,8 @@ def add_post_to_table(name: str,  text: str, avatar_name: str, video_link: str):
             name=name, 
             text=text, 
             avatar_name=avatar_name,
-            video_link = video_link
+            video_link = video_link,
+            author=current_user.id
             )
         db.add(new_post)
         db.commit()
@@ -328,7 +338,8 @@ def add_post():
 
             add_post_to_table(name, text, avatar_name, video_link)
             return render_template("success_post_add.html", name=name)
-            
+    if current_user.is_anonymous:
+        return redirect(url_for('login_form'))
     return render_template("add_post.html")
 
 @app.route("/posts/<int:id>/delete")
@@ -340,6 +351,7 @@ def post_delete(id):
 @app.route("/posts/<int:id>/update", methods=['GET', 'POST'])
 def post_update(id):
     table: Post = get_post_by_id(id)
+
     is_generate = False
     answer_dialog = ""
     if request.method == "POST":
@@ -369,7 +381,10 @@ def posts():
 def post_detail(id):
     table: Post = get_post_by_id(id)
     table_text = markdown_to_html(table.text)
-    return render_template("post.html", table=table, cnt_row=str(table.text).count('\n') + 1, forum=get_forum(SessionLocal(), table), table_text=table_text)
+    is_author = False
+    if (not current_user.is_anonymous) and current_user.id == table.author:
+        is_author = True
+    return render_template("post.html", table=table, cnt_row=str(table.text).count('\n') + 1, forum=get_forum(SessionLocal(), table), table_text=table_text, is_author=is_author)
 
 def get_forum(db: Session, post: Post):
     mes = reversed(db.query(Message).filter(Message.post_id == post.id).order_by(Message.date).all())

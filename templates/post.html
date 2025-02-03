@@ -34,8 +34,10 @@
       webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
     {% endif %}
     <h3>Дата: {{table.date}}</h3>
-    <a class="btn btn-success" href="{{table.id}}/update">Редактировать</a>
-    <a class="btn btn-danger" href="{{table.id}}/delete">Удалить</a>
+    {% if is_author %}
+        <a class="btn btn-success" href="{{table.id}}/update">Редактировать</a>
+        <a class="btn btn-danger" href="{{table.id}}/delete">Удалить</a>
+    {% endif %}
   </div>
   <div id="chatinfodiv37" style="display: none; visibility: hidden;">{{table.id}}</div>
   {% if current_user.is_authenticated %}
