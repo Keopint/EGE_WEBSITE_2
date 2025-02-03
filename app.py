@@ -18,6 +18,10 @@ import json
 from random import choices
 from string import ascii_letters
 from md_to_html import markdown_to_html
+from pdf2image import convert_from_path
+
+
+os.makedirs("./presentations")
 
 
 @login_manager.user_loader
@@ -407,6 +411,32 @@ def watch_pitch(id):
         pitch = db.query(Pitch).filter(Pitch.id==id).first()
         images = db.query(PitchImg).filter(PitchImg.pitch_id==id).order_by(PitchImg.id).all()
     return render_template("pitch.html", pitch=pitch, images=images)
+
+@app.route("/add_pitch", methods=["GET", "POST"])
+def add_pitch():
+    if request.method == "POST":
+        with SessionLocal() as db:
+            avatar_name = renamed_file(request.files["img"].filename)
+            if not request.files["img"].filename:
+                avatar_name = "base_avatar.png"
+            request.files["img"].save("./static/img/posts_img/" + avatar_name)
+            pitch = Pitch(
+                name=request.form["name"],
+                avatar_name=avatar_name)
+            db.add(pitch)
+            db.commit()
+            pdfname = renamed_file(request.files["pdf"].filename)
+            request.files["pdf"].save(f"./presentations/" + pdfname)
+            images = convert_from_path("./presentations/" + pdfname)
+            os.makedirs(f"./static/pitches/{pdfname[:-4]}")
+            for i, image in enumerate(images):
+                newname = f"./static/pitches/{pdfname[:-4]}/page_{i}.png"
+                image.save(newname)
+                pitchimg = PitchImg(pitch_id=pitch.id, url="." + newname)
+                db.add(pitchimg)
+                db.commit()
+        return redirect("/")
+    return render_template("add_pitch.html")
 
 if __name__ == "__main__":
     app.jinja_env.auto_reload = True

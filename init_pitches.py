@@ -5,12 +5,12 @@ from app import SessionLocal
 
 
 with SessionLocal() as db:
-  for pdf_path in listdir("presentations"):
+  for pdf_path in listdir("_presentations"):
     print(f"Начал обработку {pdf_path}")
     pitchname = pdf_path[:pdf_path.rfind(".")]
     makedirs(f"static/pitches/{pitchname}")
 
-    images = convert_from_path("presentations/" + pdf_path)
+    images = convert_from_path("_presentations/" + pdf_path)
     pitch = Pitch(name=pitchname, avatar_name=f"../static/pitches/{pitchname}/page_1.png")
     db.add(pitch)
     db.commit()

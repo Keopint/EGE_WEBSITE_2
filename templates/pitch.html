@@ -1,12 +1,10 @@
-{% extends "base.html" %} {% block title %} Главная страница {% endblock %} {%
-block script %} {% endblock %} {% block body %}
-<div class="text-center pt-5">
-  <!-- <h1>{{pitch.name}}</h1> -->
-  <div style="max-width: 50%">
-    <div
-      id="carouselExampleIndicators"
-      class="carousel slide w-100"
-      data-bs-ride="carousel">
+{% extends "base.html" %} 
+{% block title %} Главная страница {% endblock %} 
+{% block script %} {% endblock %} 
+{% block body %}
+<div class="d-flex justify-content-center align-items-center vh-100">
+  <div style="max-width: 50%; width: 100%;">
+    <div id="carouselExampleIndicators" class="carousel slide w-100" data-bs-ride="carousel">
       <div class="carousel-indicators">
         <button
           type="button"

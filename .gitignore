@@ -4,4 +4,6 @@ venv
 *.db
 static/img/code/*.png
 static/img/avatars/*.png
+static/img/posts_img/*.png
 static/pitches
+presentations
