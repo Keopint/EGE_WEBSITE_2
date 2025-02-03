@@ -113,6 +113,7 @@ def is_subarray(arr1, arr2):  # Создаём копию, чтобы не из�
 
 def get_tasks(number_array, difficulty, tags):
     db = SessionLocal()
+    print(number_array, difficulty, tags)
     try:
         tasks = []
         if len(tags) > 0:
@@ -267,6 +268,8 @@ def tasks():
         number_array.clear()
         difficulty.clear()
         tags = request.form["tags"].split(',')
+        if tags[0] == '':
+            tags.clear()
         for i in range(len(tags)):
             tags[i] = tags[i].strip().lower()
         print(tags)
