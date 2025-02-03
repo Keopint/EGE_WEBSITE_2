@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}
+Добавить презентацию
+{% endblock %}
+
+{% block body %}
+<div class="container pt-4">
+    <form method="post" enctype="multipart/form-data">
+        <p align="center">
+            <input type="text" name="name" id="name" class="form-control" value="" style="height: 100%; width: 40%; font-size: 250%; text-align: center; font-weight: bold;" placeholder="Название презентации" required>
+        </p><br>
+        Презентация: <input type="file" name="pdf" id="pdf" class="form-control" style="width: 22%"><br>
+        Изображение: <input type="file" name="img" id="img" class="form-control" style="width: 22%"><br>
+        <button type="submit" class="btn btn-primary">Создать!</button>
+    </form>
+
+    <script>
+        const textarea = document.getElementById('text');
+
+        textarea.addEventListener('input', function() {
+            // Сбрасываем высоту, чтобы правильно пересчитать
+            this.style.height = 'auto'; 
+            
+            // Устанавливаем новую высоту на основе scrollHeight
+            this.style.height = this.scrollHeight + 'px'; 
+            
+            // Проверяем, если высота превышает минимальную высоту
+            const lineHeight = parseInt(getComputedStyle(textarea).lineHeight);
+            const maxHeight = lineHeight * (this.rows + 1); // Максимальная высота для текущих строк
+
+            // Если высота содержимого превышает максимальную, добавляем строку
+            if (this.scrollHeight > maxHeight) {
+                this.rows += 1; // Увеличиваем количество строк
+            }
+        });
+
+        textarea.addEventListener('keydown', function(event) {
+            if (event.key === 'Backspace') {
+                const currentLine = this.value.substr(0, this.selectionStart).split('\n').pop();
+                // Проверяем, если курсор в начале последней строки
+                if (this.selectionStart === this.value.length - currentLine.length) {
+                    if (this.rows > 1) { // Уменьшаем количество строк, если это не первая строка
+                        this.rows -= 1; // Уменьшаем количество строк
+                    }
+                }
+            }
+        });
+    </script>
+</div>
+{% endblock %}      

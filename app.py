@@ -6,7 +6,7 @@ import os
 from sqlalchemy import and_, select, asc, desc
 from sqlalchemy.orm import Session, joinedload
 from database import SessionLocal
-from models import Student, Task, login_manager, Post, Submit, Message, Tag, TaskTag
+from models import Student, Task, login_manager, Post, Submit, Message, Pitch, PitchImg, Tag, TaskTag
 from datetime import datetime
 from io import BytesIO
 from fileinput import filename
@@ -18,6 +18,11 @@ import json
 from random import choices
 from string import ascii_letters
 from md_to_html import markdown_to_html
+from pdf2image import convert_from_path
+
+
+if not os.path.exists("./presentations"):
+    os.makedirs("./presentations")
 
 
 @login_manager.user_loader
@@ -226,6 +231,26 @@ def get_posts():
         return posts
     finally:
         db.close()
+
+def get_pitches():
+    db = SessionLocal()
+    try:
+        posts = db.query(Pitch).order_by(desc(Pitch.id)).all()
+    finally:
+        db.close()
+    if len(posts) == 0:
+        return []
+    return posts
+
+def get_pitches():
+    db = SessionLocal()
+    try:
+        posts = db.query(Pitch).order_by(desc(Pitch.id)).all()
+    finally:
+        db.close()
+    if len(posts) == 0:
+        return []
+    return posts
 
 @app.route('/')
 def main_page():
@@ -437,6 +462,11 @@ def posts():
     tables = get_posts()
     return render_template("posts.html", tables=tables)
 
+@app.route("/pitches")
+def pitches():
+    tables = get_pitches()
+    return render_template("pitches.html", tables=tables)
+
 @app.route("/posts/<int:id>")
 def post_detail(id):
     table: Post = get_post_by_id(id)
@@ -468,7 +498,39 @@ def api_forum(post_id):
     print("FORUM")
     print(get_forum(db, post))
     return jsonify({"data": get_forum(db, post)})
-    return get_forum(db, post)
+
+@app.route("/pitch/<int:id>")
+def watch_pitch(id):
+    with SessionLocal() as db:
+        pitch = db.query(Pitch).filter(Pitch.id==id).first()
+        images = db.query(PitchImg).filter(PitchImg.pitch_id==id).order_by(PitchImg.id).all()
+    return render_template("pitch.html", pitch=pitch, images=images)
+
+@app.route("/add_pitch", methods=["GET", "POST"])
+def add_pitch():
+    if request.method == "POST":
+        with SessionLocal() as db:
+            avatar_name = renamed_file(request.files["img"].filename)
+            if not request.files["img"].filename:
+                avatar_name = "base_avatar.png"
+            request.files["img"].save("./static/img/posts_img/" + avatar_name)
+            pitch = Pitch(
+                name=request.form["name"],
+                avatar_name=avatar_name)
+            db.add(pitch)
+            db.commit()
+            pdfname = renamed_file(request.files["pdf"].filename)
+            request.files["pdf"].save(f"./presentations/" + pdfname)
+            images = convert_from_path("./presentations/" + pdfname)
+            os.makedirs(f"./static/pitches/{pdfname[:-4]}")
+            for i, image in enumerate(images):
+                newname = f"./static/pitches/{pdfname[:-4]}/page_{i}.png"
+                image.save(newname)
+                pitchimg = PitchImg(pitch_id=pitch.id, url="." + newname)
+                db.add(pitchimg)
+                db.commit()
+        return redirect("/")
+    return render_template("add_pitch.html")
 
 if __name__ == "__main__":
     app.jinja_env.auto_reload = True
