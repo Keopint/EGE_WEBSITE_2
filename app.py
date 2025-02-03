@@ -4,7 +4,7 @@ from flask import (Flask, render_template, request, redirect,
 from flask_login import current_user, login_user, logout_user
 import os
 from sqlalchemy import and_, select, asc, desc
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from database import SessionLocal
 from models import Student, Task, login_manager, Post, Submit, Message, Tag, TaskTag
 from datetime import datetime
@@ -42,13 +42,14 @@ def add_task(source: str, statement: str,  number: int, difficulty: str, answer:
     db = SessionLocal()
     try:
         new_task = Task(
-            source = source,
+            source=source,
             statement=statement, 
             number=number, 
-            answer = answer,
-            solution = solution,
+            answer=answer,
+            solution=solution,
             difficulty=difficulty,
-            file_name = file_name
+            file_name=file_name,
+            author=current_user.id
             )
         db.add(new_task)
         db.commit()
@@ -157,7 +158,8 @@ def add_post_to_table(name: str,  text: str, avatar_name: str, video_link: str):
             name=name, 
             text=text, 
             avatar_name=avatar_name,
-            video_link = video_link
+            video_link = video_link,
+            author=current_user.id
             )
         db.add(new_post)
         db.commit()
@@ -167,10 +169,14 @@ def add_post_to_table(name: str,  text: str, avatar_name: str, video_link: str):
 def get_post_by_id(id):
     db = SessionLocal()
     try:
-        q = db.query(Post).get(id)
+        # Используем joinedload для подгрузки связанного студента (автора)
+        post = db.query(Post)\
+                .options(joinedload(Post.student))\
+                .filter(Post.id == id)\
+                .first()
+        return post
     finally:
         db.close()
-    return q
 
 def get_name_by_id(id):
     db = SessionLocal()
@@ -214,12 +220,12 @@ def delete_post(id):
 def get_posts():
     db = SessionLocal()
     try:
-        posts = db.query(Post).order_by(desc(Post.id)).all()
+        posts = db.query(Post).options(joinedload(Post.student)) \
+                             .order_by(desc(Post.id)) \
+                             .all()
+        return posts
     finally:
         db.close()
-    if len(posts) == 0:
-        return []
-    return posts
 
 @app.route('/')
 def main_page():
@@ -283,6 +289,8 @@ def add_task_form():
         tags = request.form.get('tags').split(',') 
         add_task(source, statement, number, difficulty, answer, filename, tags, solution)
         return render_template("success_task_add.html")
+    if current_user.is_anonymous:
+        return redirect(url_for('login_form'))
     return render_template("add_task_form.html")
 
 @app.route("/register_choice", methods=['GET', 'POST'])
@@ -390,7 +398,8 @@ def add_post():
 
             add_post_to_table(name, text, avatar_name, video_link)
             return render_template("success_post_add.html", name=name)
-            
+    if current_user.is_anonymous:
+        return redirect(url_for('login_form'))
     return render_template("add_post.html")
 
 @app.route("/posts/<int:id>/delete")
@@ -402,6 +411,7 @@ def post_delete(id):
 @app.route("/posts/<int:id>/update", methods=['GET', 'POST'])
 def post_update(id):
     table: Post = get_post_by_id(id)
+
     is_generate = False
     answer_dialog = ""
     if request.method == "POST":
@@ -431,7 +441,11 @@ def posts():
 def post_detail(id):
     table: Post = get_post_by_id(id)
     table_text = markdown_to_html(table.text)
-    return render_template("post.html", table=table, cnt_row=str(table.text).count('\n') + 1, forum=get_forum(SessionLocal(), table), table_text=table_text)
+    is_author = False
+    if (not current_user.is_anonymous) and current_user.id == table.author:
+        is_author = True
+    print(table.student)
+    return render_template("post.html", table=table, cnt_row=str(table.text).count('\n') + 1, forum=get_forum(SessionLocal(), table), table_text=table_text, is_author=is_author)
 
 def get_forum(db: Session, post: Post):
     mes = reversed(db.query(Message).filter(Message.post_id == post.id).order_by(Message.date).all())

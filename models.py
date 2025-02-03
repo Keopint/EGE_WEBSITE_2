@@ -13,6 +13,7 @@ class Class(Base):
     teacher_id = Column(Integer, nullable=False)
     count_student = Column(Integer, nullable=False)
 
+# models.py
 class Post(Base):
     __tablename__ = 'Post'
 
@@ -22,6 +23,8 @@ class Post(Base):
     avatar_name = Column(Text)
     video_link = Column(Text)
     date = Column(DateTime, default=lambda: datetime.utcnow().replace(second=0, microsecond=0))
+    author = Column(Integer, ForeignKey('Student.id'))  # Изменяем тип и добавляем ForeignKey
+    student = relationship("Student")  # Добавляем отношение
 
 class Message(Base):
     __tablename__ = 'Message'
@@ -85,15 +88,18 @@ class Student(UserMixin, Base):
     class_number = Column(Integer, nullable=False)
     avatar = Column(String, nullable=False)
 
+    @property
     def is_authenticated(self):
         return True
-    
+
+    @property
     def is_active(self):
         return True
-    
+
+    @property
     def is_anonymous(self):
         return False
-    
+
     def get_id(self):
         return str(self.id)
 
@@ -138,6 +144,8 @@ class TaskTag(Base):
     __tablename__ = 'task_tags'
     task_id = Column(Integer, ForeignKey('tasks.id'), primary_key=True)
     tag_id = Column(Integer, ForeignKey('tags.id'), primary_key=True)
+    author = Column(Integer, ForeignKey('Student.id'))  # Добавляем ForeignKey
+    student = relationship("Student")  # Добавляем отношение
 
 class test_task(Base):
     __tablename__ = 'test_task'

@@ -7,17 +7,17 @@
 {% block script %}
 {% endblock %}
 
-{% block body %}    
+{% block body %}
 <div class="container">
-   <div class="row"> <!-- Устанавливаем высоту для всей строки -->
-        <div class="col-2" style="overflow-y: auto; height: 98vh;"> <!-- Добавляем прокрутку для левой колонки -->
+   <div class="row">
+        <div class="col-2" style="overflow-y: auto; height: 98vh;">
             <form method="POST">
                 <div class="flex-shrink-0 pt-2">
                     <a href="/" class="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
                         <span class="fs-5 fw-semibold ms-4"><h2>Фильтры</h2></span>
                     </a>
                     <ul class="list-unstyled ps-0">
-                        <li class="mb-1">   
+                        <li class="mb-1">
                             <button style="width: 90%;" type="button" class="btn btn-outline-dark align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#number_tasks-collapse" aria-expanded="true">
                                 Выбрать задания
                             </button>
@@ -38,14 +38,14 @@
                                                 <div class="control__indicator"></div>
                                             </label>
                                         </div>
-                                    </li>                        
+                                    </li>
                                     {% endfor %}
                                 </ul>
                             </div>
                         </li>
                         <li class="mb-1">
                             <button style="width: 90%;" type="button" class="btn btn-outline-dark align-items-center rounded" data-bs-toggle="collapse" data-bs-target="#difficulty-collapse" aria-expanded="true">
-                              Cложность
+                              Сложность
                             </button>
                             <div class="collapse" id="difficulty-collapse">
                                 <ul class="btn-toggle-nav list-unstyled fw-normal mt-1 small">
@@ -60,7 +60,7 @@
                                                     <div class="control__indicator"></div>
                                                 </label>
                                             </div>
-                                        </li> 
+                                        </li>
                                     {% endfor %}
                                 </ul>
                             </div>
@@ -71,7 +71,7 @@
                           </li>
                     </ul>
                 </div>
-                <button type="submit" class="btn btn-outline-success" style="width: 90%;">Применить</button> 
+                <button type="submit" class="btn btn-outline-success" style="width: 90%;">Применить</button>
                 <button type="button" class="btn btn-outline-danger mt-4" onclick="checkAllResponses();" style="width: 90%;">Проверить задания</button>
             </form>
         </div>
@@ -79,6 +79,48 @@
             <h1 align="center" class="pt-2 pb-2">Задачи ЕГЭ</h1>
             {% for task, tags_for_task in tasks %}
                 <div class="task-item border rounded p-3 mb-3">
+                    <!-- Мета-данные задания -->
+                    <div class="d-flex flex-wrap gap-3 bg-light border rounded p-3 mb-3">
+                        <div class="d-flex align-items-center">
+                            <span class="fw-bold text-secondary me-1">Источник:</span>
+                            <span>{{ task.source }}</span>
+                        </div>
+                        {% if task.student %}
+                        <div class="d-flex align-items-center">
+                            <span class="fw-bold text-secondary me-1">Автор:</span>
+                            <span>{{ task.student.name }} {{ task.student.surname }}</span>
+                        </div>
+                        {% endif %}
+                        <div class="d-flex align-items-center">
+                            <span class="fw-bold text-secondary me-1">№ КИМ:</span>
+                            <span>{{ task.number }}</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <span class="fw-bold text-secondary me-1">Сложность:</span>
+                            <span>
+                                {% if task.difficulty == 0 %}
+                                    Легкая
+                                {% elif task.difficulty == 1 %}
+                                    Нормальная
+                                {% else %}
+                                    Сложная
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Текст задания -->
+                    <p class="mt-2">{{ task.statement }}</p>
+
+                    <!-- Файлы -->
+                    {% if task.file_name %}
+                        {% if task.file_name[-3:] == "png" or task.file_name[-4:] == "jpeg" %}
+                            <img src="/static/img/{{task.file_name}}" class="img-fluid m-2" alt="..." width="40%">
+                        {% elif task.file_name[-3:] == "txt" or task.file_name[-3:] == "xls" or task.file_name[-4:] == "xlsx" %}
+                            <a href="/static/img/{{task.file_name}}" class="btn btn-outline-secondary btn-sm mt-2" download>
+                                <i class="bi bi-download"></i> Скачать файл
+                            </a>
+                        {% endif %}
                     <p><b>({{task["source"]}}) №{{task["number"]}} Сложность:{{task["difficulty"]}}</b> <br>{{task["statement"]|safe}}</p>
                     {% if task.file_name == None %}
                     {% elif task.file_name[-3:] == "png" or task.file_name[-3:] == "jpg" %}
@@ -94,74 +136,54 @@
                     <div class="row">
                         <div id="FORM_div">
                             <form id="responseForm_{{task.id}}" data-answer="{{task.answer}}" onsubmit="return handleSubmit(event, '{{task.id}}', '{{task.answer}}');">
-                                <input type="text" name="userResponse_{{task.id}}" id="userResponse_{{task.id}}" placeholder="Введите ответ">
-                                <button type="submit" class="btn btn-outline-dark">Проверить</button>
-                                <button type="button" class="btn btn-outline-dark" onclick="toggleAnswer('answer_{{task.id}}')" style="width: 15%;">Показать ответ</button>
-                            </form>   
+                                <input type="text" name="userResponse_{{task.id}}" id="userResponse_{{task.id}}" placeholder="Введите ответ" class="form-control-sm">
+                                <button type="submit" class="btn btn-outline-dark btn-sm">Проверить</button>
+                                <button type="button" class="btn btn-outline-dark btn-sm" onclick="toggleAnswer('answer_{{task.id}}')">Показать ответ</button>
+                            </form>
                         </div>
-                        <div id="result_{{task.id}}" class="result"></div>
-                        <div id="answer_{{task.id}}" class="answer" style="width: 4%;">{{ task.answer }}</div>
+                        <div id="result_{{task.id}}" class="result mt-2"></div>
+                        <div id="answer_{{task.id}}" class="answer mt-2" style="display: none;">{{ task.answer }}</div>
                     </div>
                 </div>
-                <br>
             {% endfor %}
             <button type="button" class="btn btn-outline-dark mb-3" onclick="checkAllResponses();">Проверить все</button>
         </div>
    </div>
 </div>
-<script>
-    // Функция для обработки отправки формы
-    function handleSubmit(event, taskId, taskAnswer) {
-        event.preventDefault(); // Предотвращаем стандартное поведение формы
 
+<script>
+    function handleSubmit(event, taskId, taskAnswer) {
+        event.preventDefault();
         const userResponse = document.getElementById(`userResponse_${taskId}`).value;
         const resultDiv = document.getElementById(`result_${taskId}`);
         const inputField = document.getElementById(`userResponse_${taskId}`);
 
-        // Отправка данных на сервер
         fetch('/check_answer', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                task_id: taskId,
-                user_response: userResponse,
-                task_answer: taskAnswer
-            })
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({task_id: taskId, user_response: userResponse, task_answer: taskAnswer})
         })
         .then(response => response.json())
         .then(data => {
             if (data.status === "success") {
-                // Проверка ответа
                 if (userResponse.trim().toLowerCase() === taskAnswer.toLowerCase()) {
-                    resultDiv.innerText = "Ответ верный!";
-                    resultDiv.style.color = "green";
-                    inputField.style.backgroundColor = "lightgreen";
+                    resultDiv.innerHTML = '<i class="bi bi-check-circle-fill text-success"></i> Верно!';
+                    inputField.style.backgroundColor = "#e6ffe6";
                 } else {
-                    resultDiv.innerText = "Ответ неверный. Попробуйте еще раз.";
-                    resultDiv.style.color = "red";
-                    inputField.style.backgroundColor = "lightcoral";
+                    resultDiv.innerHTML = '<i class="bi bi-x-circle-fill text-danger"></i> Неверно!';
+                    inputField.style.backgroundColor = "#ffe6e6";
                 }
             }
         })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-
-        return false; // Возвращаем false, чтобы предотвратить перезагрузку страницы
+        .catch(console.error);
+        return false;
     }
 
     function toggleAnswer(answerId) {
         const answerDiv = document.getElementById(answerId);
-        if (answerDiv.style.display === "none" || answerDiv.style.display === "") {
-            answerDiv.style.display = "block"; // Показываем ответ
-        } else {
-            answerDiv.style.display = "none"; // Скрываем ответ
-        }
+        answerDiv.style.display = answerDiv.style.display === "none" ? "block" : "none";
     }
 
-    // Функция для проверки всех ответов
     function checkAllResponses() {
         const forms = document.querySelectorAll('form');
 
@@ -213,18 +235,14 @@
                 console.error('Error:', error);
             });
         });
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        return;
     }
 
-    function downloadFile(filename) {
-        // Создаем ссылку для скачивания
-        const link = document.createElement('a');
-        link.href = `/download/${filename}`;
-        link.download = filename; // Указываем имя файла для скачивания
-        document.body.appendChild(link);
-        link.click(); // Программно кликаем по ссылке
-        document.body.removeChild(link); // Удаляем ссылку из документа
+    // Функция для сброса всех чекбоксов
+    function uncheckAllCheckboxes() {
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = false;
+        });
     }
 
     function checkAllCheckboxes() {
