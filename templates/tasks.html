@@ -237,6 +237,16 @@
         });
     }
 
+    function downloadFile(filename) {
+        // Создаем ссылку для скачивания
+        const link = document.createElement('a');
+        link.href = `/download/${filename}`;
+        link.download = filename; // Указываем имя файла для скачивания
+        document.body.appendChild(link);
+        link.click(); // Программно кликаем по ссылке
+        document.body.removeChild(link); // Удаляем ссылку из документа
+    }
+
     // Функция для сброса всех чекбоксов
     function uncheckAllCheckboxes() {
         const checkboxes = document.querySelectorAll('input[type="checkbox"]');

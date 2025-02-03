@@ -137,6 +137,8 @@ class Task(Base):
     difficulty = Column(String, nullable=False)
     file_name = Column(String)
     solution = Column(String)
+    author = Column(Integer, ForeignKey('Student.id'))
+    student = relationship("Student")
 
     tags = relationship('Tag', secondary='task_tags', back_populates='tasks')
 
