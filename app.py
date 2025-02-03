@@ -21,7 +21,8 @@ from md_to_html import markdown_to_html
 from pdf2image import convert_from_path
 
 
-os.makedirs("./presentations")
+if not os.path.exists("./presentations"):
+    os.makedirs("./presentations")
 
 
 @login_manager.user_loader
