@@ -158,6 +158,7 @@ class Task(Base):
     student = relationship("Student")
 
     tags = relationship('Tag', secondary='task_tags', back_populates='tasks')
+    variants = relationship('Variant', secondary='variants_tasks', back_populates='tasks')
 
 class TaskTag(Base):
     __tablename__ = 'task_tags'
@@ -165,6 +166,17 @@ class TaskTag(Base):
     tag_id = Column(Integer, ForeignKey('tags.id'), primary_key=True)
     author = Column(Integer, ForeignKey('Student.id'))  # Добавляем ForeignKey
     student = relationship("Student")  # Добавляем отношение
+
+class Variant(Base):
+    __tablename__ = 'Variant'
+
+    id = Column(Integer, primary_key=True)
+    tasks = relationship('Task', secondary='variants_tasks', back_populates='variants')
+
+class VariantTask(Base):
+    __tablename__ = 'variants_tasks'
+    variant_id = Column(Integer, ForeignKey('Variant.id'), primary_key=True)
+    task_id = Column(Integer, ForeignKey('tasks.id'), primary_key=True)
 
 class test_task(Base):
     __tablename__ = 'test_task'

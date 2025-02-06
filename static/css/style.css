@@ -18,6 +18,48 @@ header {
   padding: 1%;
 }
 
+.add-button-2 {
+  width: 30%;
+  height: 30%;
+  background-color: #60a7f2;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 160%;
+  text-decoration: none;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease;
+  line-height: 320%; /* Добавлено для точного выравнивания текста */
+  text-align: center;
+}
+
+.add-button-1 {
+  width: 30%;
+  height: 30%;
+  background-color: #60a7f2;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 200%;
+  text-decoration: none;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease;
+  line-height: 300%; /* Добавлено для точного выравнивания текста */
+  text-align: center;
+}
+
+.add-button-1:hover {
+  background-color: #0056b3;
+}
+
+.add-button-2:hover {
+  background-color: #0056b3;
+}
+
 .comment {
   border: 1px solid #e0e0e0;
   border-radius: 5px;

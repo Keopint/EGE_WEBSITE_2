@@ -6,14 +6,18 @@
 
 {% block body %}
 <div class="container w-75 pt-5">
-    <h1 class="mt-2" align="center" style="font-size: 300%;">Презинтации на сайте!</h1>
+    <h1 class="mt-2" align="center" style="font-size: 300%;">Презентации на сайте!</h1>
     {% if tables|length == 0 %}
-        <h1 align="center" style="font-size: 200%;">Пока нет презинтаций</h1>
+        <h1 align="center" style="font-size: 200%;">Пока нет презентаций</h1>
     {% endif %}
+    <div align="center" class="mb-4"><a class="btn btn-outline-dark" style="height: 7vh; font-size: 150%; text-decoration: none;" href="{{url_for('add_pitch')}}">
+            Добавить презентацию
+        </a>
+    </div>  
     {% for table in tables %}
         <div class="alert alert-info">
             <h1 style="color: #000;">{{table['name']}}<img align="right" height="12%" width="13%" src="static/img/posts_img/{{table.avatar_name}}"></h1> 
-            <p style="color:#000"><a href="pitch/{{table['id']}}" class="btn btn-info">Подробнее</a>  Дата: {{table.date}}</p>
+            <p style="color:#000"><a href="pitch/{{table['id']}}" class="btn btn-info">Подробнее</a>  Дата: {{table.date.strftime('%d.%m.%Y %H:%M')}}</p>
         </div>
     {% endfor %}
 </div>

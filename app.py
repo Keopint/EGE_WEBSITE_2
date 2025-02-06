@@ -179,9 +179,22 @@ def get_post_by_id(id):
                 .options(joinedload(Post.student))\
                 .filter(Post.id == id)\
                 .first()
-        return post
     finally:
         db.close()
+    return post
+
+def get_task_by_id(id):
+    db = SessionLocal()
+    try:
+        # Используем joinedload для подгрузки связанного студента (автора)
+        task = db.query(Task)\
+                .options(joinedload(Task.student))\
+                .options(joinedload(Task.tags))\
+                .filter(Task.id == id)\
+                .first()
+    finally:
+        db.close()
+    return task
 
 def get_name_by_id(id):
     db = SessionLocal()
@@ -534,7 +547,61 @@ def add_pitch():
                 db.add(pitchimg)
                 db.commit()
         return redirect("/")
+    if current_user.is_anonymous:
+        return redirect(url_for('login_form'))
     return render_template("add_pitch.html")
+
+@app.route('/get_task/<int:task_id>', methods=['GET'])
+def get_task(task_id):
+    task = get_task_by_id(task_id)
+    difficulty_names = ["Легкая", "Нормальная", "Сложная"]
+    tags = ' #'.join(tag.name for tag in task.tags)
+    if len(tags) > 0:
+        tags = '#' + tags
+    if task:
+        return jsonify({
+            "task_html" : f'''
+                <div class="task-item border rounded p-3 mb-3">
+                    <!-- Мета-данные задания -->
+                    <div class="d-flex flex-wrap gap-3 bg-light border rounded p-3 mb-3">
+                        <div class="d-flex align-items-center">
+                            <span class="fw-bold text-secondary me-1">Id:</span>
+                            <span>{ task.id }</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <span class="fw-bold text-secondary me-1">Источник:</span>
+                            <span>{ task.source }</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <span class="fw-bold text-secondary me-1">№ КИМ:</span>
+                            <span>{ task.number }</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <span class="fw-bold text-secondary me-1">Сложность:</span>
+                            <span>
+                                { difficulty_names[task.difficulty]}
+                            </span>
+                        </div>
+                    </div> 
+                    <p class="mt-2">{ task.statement}</p>
+                    <p>
+                        {tags}
+                    </p>
+                '''
+        })
+    return jsonify({'error': 'Task not found'}), 404
+
+@app.route("/add_variant", methods=["GET", "POST"])
+def add_variant():
+    if current_user.is_anonymous:
+        return redirect(url_for('login_form'))
+    return render_template("add_variant.html")
+
+@app.route("/variants", methods=["GET", "POST"])
+def variants():
+    if current_user.is_anonymous:
+        return redirect(url_for('login_form'))
+    return render_template("variants.html")
 
 if __name__ == "__main__":
     app.jinja_env.auto_reload = True

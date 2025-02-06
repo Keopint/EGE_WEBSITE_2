@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}
+Главная страница
+{% endblock %}
+
+{% block script %}
+<script>
+    function fetchTask() {
+        const taskId = document.getElementById('taskId').value;
+        if (!taskId) {
+            alert('Please enter a Task ID');
+            return;
+        }
+
+        fetch(`/get_task/${taskId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    addTaskToPage(data);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function addTaskToPage(task) {
+        const taskList = document.getElementById('taskList');
+        const taskElement = document.createElement('div');
+        taskElement.className = 'card mb-3';
+        taskElement.innerHTML = task.task_html;
+        taskList.appendChild(taskElement);
+    }
+</script>
+{% endblock %}
+
+{% block body %} 
+<div class="container pt-2">
+    <div class="container mt-5">
+        <h1>Task Manager</h1>
+        <div class="mb-3">
+            <label for="taskId" class="form-label">Enter Task ID:</label>
+            <input type="number" class="form-control" id="taskId" placeholder="Task ID">
+            <button class="btn btn-primary mt-2" onclick="fetchTask()">Get Task</button>
+        </div>
+        <div id="taskList" class="mt-4">
+            <!-- Сюда будут добавляться задания -->
+        </div>
+    </div>
+</div>
+{% endblock %}
