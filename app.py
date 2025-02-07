@@ -566,7 +566,7 @@ def get_task(task_id):
     if task:
         return jsonify({
             "task_html" : f'''
-                <div class="task-item border rounded p-3 mb-3">
+                <div class="task-item border rounded p-3 mb-3 middle_backcolor">
                     <!-- Мета-данные задания -->
                     <div class="d-flex flex-wrap gap-3 bg-light border rounded p-3 mb-3">
                         <div class="d-flex align-items-center">
@@ -609,7 +609,7 @@ def add_variant():
                 print("Получены ID заданий:", task_ids) 
                 new_variant = Variant(author=current_user.id)  # Создаем новый вариант
                 for task_id in task_ids:
-                    task = db.query(Task).get(task_id)
+                    task = get_task_by_id(task_id)
                     if task:
                         new_variant.tasks.append(task)  # Добавляем задание в вариант
                     else:
