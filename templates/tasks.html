@@ -49,13 +49,15 @@
                             </button>
                             <div class="collapse" id="difficulty-collapse">
                                 <ul class="btn-toggle-nav list-unstyled fw-normal mt-1 small">
-                                    {% for i in range(3) %}
+                                    {% for i in range(5) %}
                                         <li class="ms-3">
                                             <div class="checkbox-wrapper-21">
                                                 <label class="control control--checkbox">
-                                                    {% if i == 0 %}Легкая{% endif %}
-                                                    {% if i == 1 %}Нормальная{% endif %}
-                                                    {% if i == 2 %}Сложная{% endif %}
+                                                    {% if i == 0 %}Базовая{% endif %}
+                                                    {% if i == 1 %}Легкая{% endif %}
+                                                    {% if i == 2 %}Нормальная{% endif %}
+                                                    {% if i == 3 %}Сложная{% endif %}
+                                                    {% if i == 4 %}Хардкорная{% endif %}
                                                     <input type="checkbox" name="difficulty_{{i}}" id="difficulty_{{i}}" {% if checkbox_difficulty_checked[i] %}checked{% endif %}/>
                                                     <div class="control__indicator"></div>
                                                 </label>

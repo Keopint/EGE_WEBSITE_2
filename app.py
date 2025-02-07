@@ -259,10 +259,10 @@ def main_page():
 @app.route("/tasks", methods=['GET', 'POST'])    
 def tasks():
     number_array = list(range(1, 28))
-    difficulty_names = ["Легкая", "Нормальная", "Сложная"]
-    difficulty = list(range(0, 3))
-    checkbox_task_checked = [True] * 28
-    checkbox_difficulty_checked = [True] * 3
+    difficulty_names = ["Базовая", "Легкая", "Нормальная", "Сложная", "Хардкор"]
+    difficulty = list(range(0, len(difficulty_names)))
+    checkbox_task_checked = [True] * (len(number_array) + 1)
+    checkbox_difficulty_checked = [True] * len(difficulty_names)
     tags = []
     if request.method == "POST":
         number_array.clear()
@@ -278,7 +278,7 @@ def tasks():
                 number_array.append(i)
             else:
                 checkbox_task_checked[i] = False
-        for i in range(3):
+        for i in range(len(difficulty_names)):
             if f"difficulty_{i}" in request.form:
                 difficulty.append(i)
             else:
