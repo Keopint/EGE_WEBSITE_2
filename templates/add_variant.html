@@ -5,7 +5,33 @@
 {% endblock %}
 
 {% block script %}
+{% endblock %}
+
+{% block body %} 
+<div class="container pt-2">
+    <div class="container mt-5">
+        <h1 align="center">Создание варианта</h1>
+        <form method="POST" enctype="multipart/form-data">
+            <div align="center" class="mb-4">
+                <button type="submit" class="btn btn-outline-dark" style="height: 7vh; font-size: 150%;">
+                    Добавить вариант
+                </button>
+            </div>  
+            <div class="mb-3">
+                <label for="taskId" class="form-label">Введите ID задания, которое хотите добавить, и нажмите "Добавить задание":</label>
+                <input type="number" class="form-control" id="taskId" placeholder="Id задания">
+                <button type="button" class="btn btn-primary mt-2" onclick="fetchTask()">Добавить задание</button>
+            </div>
+            <div id="taskList" class="mt-4">
+                <!-- Сюда будут добавляться задания -->
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
+    let taskIds = []; // Массив для хранения ID выбранных заданий
+
     function fetchTask() {
         const taskId = document.getElementById('taskId').value;
         if (!taskId) {
@@ -19,34 +45,39 @@
                 if (data.error) {
                     alert(data.error);
                 } else {
-                    addTaskToPage(data);
+                    addTaskToPage(data, taskId); // Передаем taskId в функцию
                 }
             })
             .catch(error => console.error('Error:', error));
     }
 
-    function addTaskToPage(task) {
+    function addTaskToPage(task, taskId) {
         const taskList = document.getElementById('taskList');
         const taskElement = document.createElement('div');
         taskElement.className = 'card mb-3';
         taskElement.innerHTML = task.task_html;
         taskList.appendChild(taskElement);
-    }
-</script>
-{% endblock %}
 
-{% block body %} 
-<div class="container pt-2">
-    <div class="container mt-5">
-        <h1>Task Manager</h1>
-        <div class="mb-3">
-            <label for="taskId" class="form-label">Enter Task ID:</label>
-            <input type="number" class="form-control" id="taskId" placeholder="Task ID">
-            <button class="btn btn-primary mt-2" onclick="fetchTask()">Get Task</button>
-        </div>
-        <div id="taskList" class="mt-4">
-            <!-- Сюда будут добавляться задания -->
-        </div>
-    </div>
-</div>
+        // Добавляем ID задания в массив
+        taskIds.push(parseInt(taskId));
+    }
+
+    // Функция для добавления скрытого поля ввода с ID заданий перед отправкой формы
+    function prepareFormSubmission() {
+        const form = document.querySelector('form');
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.id = 'task_ids';
+        hiddenInput.name = 'task_ids';
+        hiddenInput.value = JSON.stringify(taskIds); // Преобразуем массив в JSON-строку
+        form.appendChild(hiddenInput);
+
+        return true; // Разрешаем отправку формы
+    }
+
+    // Добавляем обработчик события для отправки формы, чтобы вызвать prepareFormSubmission перед отправкой
+    document.querySelector('form').addEventListener('submit', function(event) {
+        prepareFormSubmission();
+    });
+</script>
 {% endblock %}
