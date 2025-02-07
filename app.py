@@ -609,7 +609,7 @@ def add_variant():
                 print("Получены ID заданий:", task_ids) 
                 new_variant = Variant(author=current_user.id)  # Создаем новый вариант
                 for task_id in task_ids:
-                    task = db.query(Task).get(task_id)
+                    task = get_task_by_id(task_id)
                     if task:
                         new_variant.tasks.append(task)  # Добавляем задание в вариант
                     else:
