@@ -120,7 +120,35 @@ header a, header li, h1, h2, h3, h4, header p {
   margin-right: 10px;
 }
 
+/* Colors */
 
+.main_backcolor {
+  background-color: #D3D7E7;
+}
+
+.middle_backcolor {
+  background-color: #f0f6fa;
+}
+
+.last_backcolor {
+  background-color: #465779;
+}
+
+.main_color {
+  color: #D3D7E7;
+}
+
+.middle_color {
+  color: #f0f6fa;
+}
+
+.last_color {
+  color: #465779;
+}
+
+.header_back {
+  background-color: #221831;
+}
 
 
 
