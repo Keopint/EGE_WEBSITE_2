@@ -353,7 +353,8 @@ def register_student():
         else:
             filename = "base_avatar.png"
         add_student(name, surname, patronymic, class_number, email, login, password, filename)
-        return redirect(url_for("main_page"))
+        print("login", login_user(get_user_by_email(email)))
+        return redirect(url_for("profile"))
     return render_template("register_student.html")
 
 @app.route("/login_form", methods=['GET', 'POST'])
