@@ -1,0 +1,38 @@
+{% extends "base.html" %} {% block title %} Главная страница {% endblock %} {%
+block script %} {% endblock %} {% block body %}
+<!-- Миша помилуй и прости -->
+<style>
+  .unit {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    cursor: move;
+  }
+</style>
+<div class="text-center pt-5">
+  <h1>Создание курса!</h1>
+  <div class="container">
+    {% for unit in units %}
+    <div class="unit">
+      <input
+        type="text"
+        class="name"
+        value="{{unit.name}}"
+        placeholder="Name" />
+      <input
+        type="text"
+        class="link"
+        value="{{unit.link}}"
+        placeholder="Link" />
+      <button class="remove">Rm</button>
+      <button class="add">Add</button>
+    </div>
+    {% endfor %}
+  </div>
+  <button onclick="update_cource()">Обновить курс!</button>
+</div>
+<script>
+  course_id = "{{course_id}}";
+</script>
+<script src="{{url_for('static', filename='course.js')}}"></script>
+{% endblock %}

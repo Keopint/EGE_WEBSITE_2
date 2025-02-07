@@ -13,7 +13,27 @@ class Class(Base):
     teacher_id = Column(Integer, nullable=False)
     count_student = Column(Integer, nullable=False)
 
-# models.py
+class Course(Base):
+    __tablename__ = 'Course'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(Text, nullable=False)
+    description = Column(Text, nullable=False)
+    avatar_name = Column(Text)
+    units = relationship("Unit", back_populates="course", cascade="all, delete-orphan")
+    date = Column(DateTime, default=lambda: datetime.utcnow().replace(second=0, microsecond=0))
+
+
+class Unit(Base):
+    __tablename__ = 'Unit'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    course_id = Column(Integer, ForeignKey('Course.id', ondelete='CASCADE'), nullable=False)
+    name = Column(Text, nullable=False)
+    link = Column(Text, nullable=False)
+    course = relationship("Course", back_populates="units")
+
+
 class Post(Base):
     __tablename__ = 'Post'
 

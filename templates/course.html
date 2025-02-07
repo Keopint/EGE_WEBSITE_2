@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}
+Главная страница
+{% endblock %}
+
+{% block script %}
+{% endblock %}
+
+{% block body %}
+<link rel="stylesheet" src="../static/css/style_courses.css">
+<div class="flex-shrink-0 p-3 uk-flex-inline" style="width: 100%; margin-top: 70px;">
+        <div class="uk-flex-inline uk-flex-between" style="width: 280px; height: 80vh; overflow-y: scroll;">
+            <ul class="nav nav-pills flex-column mb-auto" style="width: 100%;">
+                {% for u in units %}
+                  <!-- <li>
+                    <a href="/course/{{course.id}}/{{u.id}}" class="nav-link link-body-emphasis">
+                      <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
+                      {{u.name}}
+                    </a>
+                  </li> -->
+                  <li style="width: 100%;">
+                    <a href="/course/{{course.id}}/{{u.id}}" class="uk-link-reset nav-link link-body-emphasis">
+                      <div class="uk-card uk-card-hover uk-card-large uk-margin uk-flex-center" style="border-radius: 10px; background-color: #95a6c9;">
+                        <p class="be_centered uk-text-large" style="text-decoration: none; text-align: center;">{{u.name}}</p>
+                      </div>
+                    </a>
+                  </li>
+                {% endfor %}
+              </ul>
+        </div>
+
+        <div class="be_centered" style="width: 100%; height: 80vh;">
+            <h1>{{target_unit.name}}</h1>
+            <iframe src="{{target_unit.link}}" class="flex-grow-1 ms-3" style="border: none; width: 100%; height: 70vh;"></iframe>
+        </div>
+</div>
+{% endblock %}
