@@ -149,7 +149,7 @@ class Task(Base):
     source = Column(Text, nullable=False)
     statement = Column(Text, nullable=False)
     number = Column(Integer, nullable=False)
-    answer = Column(Integer, nullable=False)
+    answer = Column(Text, nullable=False)
     solution = Column(Text, nullable=False)
     difficulty = Column(Integer, nullable=False)
     file_name = Column(String)

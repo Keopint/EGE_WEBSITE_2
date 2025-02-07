@@ -43,7 +43,7 @@ def add_render_arguments_decorator(func):
 render_template = add_render_arguments_decorator(render_template)
 # сделал подставление current_user в render templates
 
-def add_task(source: str, statement: str,  number: int, difficulty: int, answer: int, file_name: str, tags, solution: str = "NO"):
+def add_task(source: str, statement: str,  number: int, difficulty: int, answer: str, file_name: str, tags, solution: str = "NO"):
     db = SessionLocal()
     try:
         new_task = Task(
@@ -308,7 +308,7 @@ def add_task_form():
         statement = str(request.form["statement"]).replace('\n', '<br>')
         number = int(request.form["number"])
         difficulty = int(request.form.get("select_difficulty"))
-        answer = int(request.form["answer"])
+        answer = request.form["answer"]
         solution = request.form["solution"]
         f = request.files['file']
         filename = renamed_file(f.filename)
@@ -393,7 +393,7 @@ def profile(id=None):
 def check_answer():
     data = request.json
     task_id = data.get('task_id')
-    user_response = int(data.get('user_response'))
+    user_response = data.get('user_response')
     task_answer = data.get('task_answer')
 
     try:
