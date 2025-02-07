@@ -60,10 +60,6 @@ body {
 
 /**/
 
-a {
-  text-decoration: none;
-}
-
 .a_head {
   color: white;
 }
@@ -78,8 +74,7 @@ a {
 }
 
 .be_centered {
-  margin-top: auto;
-  margin-bottom: auto;
+  margin: 0 auto;
 }
 
 .logo_png {
@@ -104,7 +99,7 @@ ul, li {
   list-style: none;
 }
 
-header a, li, h1, h2, h3, h4, p {
+header a, header li, header h1, header h2, header h3, header h4, header p {
   font-family: 'Courier New', Courier, monospace;
 }
 
@@ -128,8 +123,35 @@ header a, li, h1, h2, h3, h4, p {
   margin-right: 10px;
 }
 
+/* Colors */
 
+.main_backcolor {
+  background-color: #D3D7E7;
+}
 
+.middle_backcolor {
+  background-color: #f0f6fa;
+}
+
+.last_backcolor {
+  background-color: #465779;
+}
+
+.main_color {
+  color: #D3D7E7;
+}
+
+.middle_color {
+  color: #f0f6fa;
+}
+
+.last_color {
+  color: #465779;
+}
+
+.header_back {
+  background-color: #221831;
+}
 
 
 
