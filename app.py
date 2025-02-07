@@ -6,7 +6,7 @@ import os
 from sqlalchemy import and_, select, asc, desc
 from sqlalchemy.orm import Session, joinedload
 from database import SessionLocal
-from models import Student, Task, login_manager, Post, Submit, Message, Pitch, PitchImg, Tag, TaskTag
+from models import Student, Task, login_manager, Post, Submit, Message, Pitch, PitchImg, Tag, TaskTag, Variant, VariantTask
 from datetime import datetime
 from io import BytesIO
 from fileinput import filename
@@ -144,6 +144,11 @@ def get_tags(number_array, difficulty, tags):
     finally:
         db.close()
     return tags_for_tasks
+
+def get_variant_by_id(id : int):
+    db = SessionLocal()
+    variant = db.query(Variant).options(joinedload(Variant.tasks)).get(id)
+    return variant
 
 def get_user_by_email(email):
     db = SessionLocal()
@@ -595,15 +600,43 @@ def get_task(task_id):
 def add_variant():
     if current_user.is_anonymous:
         return redirect(url_for('login_form'))
+    if request.method == 'POST':
+        with SessionLocal() as db:
+            task_ids_json = request.form.get('task_ids')
+            if task_ids_json:
+                task_ids = json.loads(task_ids_json)  # Преобразуем JSON-строку обратно в массив
+                
+                print("Получены ID заданий:", task_ids) 
+                new_variant = Variant(author=current_user.id)  # Создаем новый вариант
+                for task_id in task_ids:
+                    task = db.query(Task).get(task_id)
+                    if task:
+                        new_variant.tasks.append(task)  # Добавляем задание в вариант
+                    else:
+                        return f"Task with ID {task_id} not found", 400
+                db.add(new_variant)
+                db.commit()
+                return redirect(url_for("variants"))
+            else:
+                return "Не получены ID заданий.", 400
     return render_template("add_variant.html")
+
+@app.route("/watch_variant/<int:id>", methods=["GET", "POST"])
+def watch_variant(id):
+    if current_user.is_anonymous:
+        return redirect(url_for('login_form'))
+    variant = get_variant_by_id(id)
+    return render_template("watch_variant.html", variant=variant)
 
 @app.route("/variants", methods=["GET", "POST"])
 def variants():
     if current_user.is_anonymous:
         return redirect(url_for('login_form'))
-    return render_template("variants.html")
+    with SessionLocal() as db:
+        variants = db.query(Variant).order_by(Variant.id).options(joinedload(Variant.student)).all()
+    return render_template("variants.html", variants=variants)
 
 if __name__ == "__main__":
-    app.jinja_env.auto_reload = True
+    app.jinja_env.auto_reload = True        
     app.config['TEMPLATES_AUTO_RELOAD'] = True
     app.run(port=8080, host="127.0.0.2", debug=True)
