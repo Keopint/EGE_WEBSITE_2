@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}
+Добавить сценарий
+{% endblock %}
+
+{% block body %}
+<div class="container pt-4">
+    <form method="post" enctype="multipart/form-data">
+        <p align="center">
+            <input type="text" name="name" id="name" class="form-control" value="" style="height: 100%; width: 40%; font-size: 250%; text-align: center; font-weight: bold;" placeholder="Название курса" required>
+        </p><br>
+        <textarea name="description" id="description" class='form-control textareaElement'></textarea>
+        
+        <input type="file" name="file" id="file" class="form-control" style="width: 22%"><br>
+        <input id="send_post" type="submit" name="send_post" class="btn btn-success mb-3" value="Запостить статью"> 
+    </form>
+</div>
+{% endblock %}      

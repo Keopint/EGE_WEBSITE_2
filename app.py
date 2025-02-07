@@ -6,7 +6,9 @@ import os
 from sqlalchemy import and_, select, asc, desc
 from sqlalchemy.orm import Session
 from database import SessionLocal
-from models import Student, Task, login_manager, Post, Submit, Message, Pitch, PitchImg
+from models import (Student, Task, login_manager, Post,
+                    Submit, Message, Pitch, PitchImg,
+                    Course, Unit)
 from datetime import datetime
 from io import BytesIO
 from fileinput import filename
@@ -438,6 +440,67 @@ def add_pitch():
                 db.commit()
         return redirect("/")
     return render_template("add_pitch.html")
+
+@app.route("/course/add", methods=["GET", "POST"])
+def course_add():
+    if request.method == "POST":
+        with SessionLocal() as db:
+            if request.files.get("file").filename:
+                imgname = renamed_file(request.files.get("file").filename)
+                request.files.get("file").save("./static/img/avatars/" + imgname)
+            else:
+                imgname = None
+            course = Course(name=request.form.get("name"), avatar_name=imgname,
+                            description=request.form.get("description"))
+            db.add(course)
+            db.commit()
+            u = Unit(name="start unit", link="", course_id=course.id)
+            db.add(u)
+            db.commit()
+            return redirect("/course/edit/" + str(course.id))
+    return render_template("add_course.html")
+
+@app.route("/course/edit/<int:id>")
+def course_edit(id):
+    with SessionLocal() as db:
+        course = db.query(Course).get(id)
+        return render_template("course_edit.html", course_id=id, course=course, units=course.units)
+
+@app.route("/courses")
+def cources():
+    with SessionLocal() as db:
+        course = db.query(Course).all()
+        return render_template("cources.html", tables=course)
+
+@app.route("/api/update_course/<int:id>", methods=["POST"])
+def update_course_api(id):
+    m = request.json["data"]
+    with SessionLocal() as db:
+        course = db.query(Course).filter(Course.id==id).first()
+        if not course:
+            return
+        db.query(Unit).filter_by(course_id=course.id).delete()
+        db.commit()
+        for e in m:
+            u = Unit(name=e["name"], link=e["link"], course_id=course.id)
+            db.add(u)
+        db.commit()
+    return jsonify({})
+
+@app.route("/course/<int:id>")
+def redirect_to_course_page(id):
+    with SessionLocal() as db:
+        course = db.query(Course).get(id)
+        units = course.units
+        return redirect(f"/course/{id}/{units[0].id}")
+
+@app.route("/course/<int:id>/<int:uid>")
+def course_page(id, uid):
+    with SessionLocal() as db:
+        course = db.query(Course).get(id)
+        units = course.units
+        target_unit = db.query(Unit).get(uid)
+        return render_template("course.html", target_unit=target_unit, course=course, units=units)
 
 if __name__ == "__main__":
     app.jinja_env.auto_reload = True
