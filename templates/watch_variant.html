@@ -11,9 +11,20 @@
 <div class="container" style="margin-top: 80px;">
    <div class="row">
         <div class="col-2" style="overflow-y: auto; height: 98vh;">
+            <div class="flex-shrink-0 pt-2">
+                <a href="/" class="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
+                    <span class="fs-5 fw-semibold ms-4"><h2>Действия</h2></span>
+                </a>
+            </div>
+            <button type="button" class="btn btn-outline-dark mb-2" onclick="checkAllResponses();" style="width: 90%;">Проверить задания</button>
+            <a class="btn btn-outline-dark" style="width: 90%;" href="{{url_for('posts')}}">Посмотреть лекции</a>
         </div>
         <div class="col-sm-10" style="overflow-y: auto; height: 100vh;"> <!-- Добавляем прокрутку для правой колонки -->
             <h1 align="center" class="pt-2 pb-2">Задачи ЕГЭ</h1>
+            <div id="statistics" class="mb-3" style="display: none;">
+                <span id="correctCount" class="text-success"></span> |
+                <span id="incorrectCount" class="text-danger"></span>
+            </div>
             {% for task in variant.tasks %}
                 <div class="task-item border rounded p-3 mb-3 bg-light">
                     <!-- Мета-данные задания -->
@@ -107,26 +118,27 @@
 
     function checkAllResponses() {
         const forms = document.querySelectorAll('form');
+        let correctCount = 0;
+        let incorrectCount = 0;
 
         if (forms.length === 0) {
-            alert("Формы не найдены!"); // Сообщение об ошибке
-            return; // Выход из функции, если формы не найдены
+            alert("Формы не найдены!");
+            return;
         }
 
         forms.forEach(form => {
-            const taskId = form.id.split('_')[1]; // Получаем номер задачи
+            const taskId = form.id.split('_')[1];
             const userResponse = document.getElementById(`userResponse_${taskId}`);
             const resultDiv = document.getElementById(`result_${taskId}`);
             const taskAnswer = form.getAttribute('data-answer');
 
             if (!userResponse || !resultDiv) {
-                console.error(`Элементы для задачи №${taskId} не найдены!`); // Сообщение об ошибке
-                return; // Выход из цикла, если элементы не найдены
+                console.error(`Элементы для задачи №${taskId} не найдены!`);
+                return;
             }
 
             console.log(`Задача №${taskId} - Пользовательский ответ: ${userResponse.value}, Правильный ответ: ${taskAnswer}`);
 
-            // Отправка данных на сервер
             fetch('/check_answer', {
                 method: 'POST',
                 headers: {
@@ -145,17 +157,35 @@
                         resultDiv.innerText = "Ответ верный!";
                         resultDiv.style.color = "green";
                         userResponse.style.backgroundColor = "lightgreen";
+                        correctCount++; // Увеличиваем счетчик правильных ответов
                     } else {
                         resultDiv.innerText = "Ответ неверный. Попробуйте еще раз.";
                         resultDiv.style.color = "red";
                         userResponse.style.backgroundColor = "lightcoral";
+                        incorrectCount++; // Увеличиваем счетчик неправильных ответов
                     }
+
+                    // Обновляем статистику после каждого ответа
+                    updateStatistics(correctCount, incorrectCount);
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
             });
         });
+    }
+
+    // Функция для обновления статистики
+    function updateStatistics(correctCount, incorrectCount) {
+        const statisticsDiv = document.getElementById('statistics');
+        const correctCountSpan = document.getElementById('correctCount');
+        const incorrectCountSpan = document.getElementById('incorrectCount');
+
+        if (statisticsDiv && correctCountSpan && incorrectCountSpan) {
+            statisticsDiv.style.display = 'block'; // Показываем блок статистики
+            correctCountSpan.innerText = `Правильных ответов: ${correctCount}`;
+            incorrectCountSpan.innerText = `Неправильных ответов: ${incorrectCount}`;
+        }
     }
 
     function downloadFile(filename) {
