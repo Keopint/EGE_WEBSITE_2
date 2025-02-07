@@ -28,11 +28,6 @@
           </table>
       </div>
       {{table_text | safe}}
-    {% if table.video_link != "" %}
-      <iframe width="720" height="405"
-      src="https://rutube.ru/play/embed/{{table.video_link}}" frameBorder="0" allow="clipboard-write; autoplay"
-      webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
-    {% endif %}
     <h3>Дата: {{table.date.strftime('%d.%m.%Y %H:%M')}}</h3>
     {% if is_author %}
         <a class="btn btn-success" href="{{table.id}}/update">Редактировать</a>

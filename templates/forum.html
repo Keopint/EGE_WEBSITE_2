@@ -3,7 +3,7 @@
   <div class="comment">
     <div class="comment-header">
         <span class="username">{{mes.user.name}}</span>
-        <span class="timestamp">{{mes.date}}</span>
+        <span class="timestamp">{{mes.date.strftime('%d.%m.%Y %H:%M')}}</span>
     </div>
     <div class="comment-body">
         <p>{{mes.text}}</p>

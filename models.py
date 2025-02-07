@@ -41,7 +41,6 @@ class Post(Base):
     name = Column(Text, nullable=False)
     text = Column(Text, nullable=False)
     avatar_name = Column(Text)
-    video_link = Column(Text)
     date = Column(DateTime, default=lambda: datetime.utcnow().replace(second=0, microsecond=0))
     author = Column(Integer, ForeignKey('Student.id'))
     student = relationship("Student")

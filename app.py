@@ -163,14 +163,13 @@ def get_student_by_id(id):
     q = db.query(Student).get(id)
     return q
 
-def add_post_to_table(name: str,  text: str, avatar_name: str, video_link: str):
+def add_post_to_table(name: str,  text: str, avatar_name: str):
     db = SessionLocal()
     try:
         new_post = Post(
             name=name, 
             text=text, 
             avatar_name=avatar_name,
-            video_link = video_link,
             author=current_user.id
             )
         db.add(new_post)
@@ -212,7 +211,7 @@ def get_name_by_id(id):
         db.close()
     return name
 
-def change_post(id: int, name: str,  text: str, avatar_name: str, video_link: str):
+def change_post(id: int, name: str,  text: str, avatar_name: str):
     db = SessionLocal()
     post = db.query(Post).get(id)
     try:
@@ -220,7 +219,6 @@ def change_post(id: int, name: str,  text: str, avatar_name: str, video_link: st
         post.text = text
         if avatar_name != "book.jpg":
             post.avatar_name = avatar_name
-        post.video_link = video_link
         db.commit()
     finally:
         db.close()
@@ -439,13 +437,12 @@ def add_post():
             text = request.form['text']
             image = request.files['file']
             avatar_name = renamed_file(image.filename)
-            video_link = request.form["video_link"]
             if len(image.filename) != 0:
                 image.save(f"static/img/posts_img/{avatar_name}")
             else:
                 avatar_name = "book.jpg"
 
-            add_post_to_table(name, text, avatar_name, video_link)
+            add_post_to_table(name, text, avatar_name)
             return render_template("success_post_add.html", name=name)
     if current_user.is_anonymous:
         return redirect(url_for('login_form'))
@@ -469,13 +466,12 @@ def post_update(id):
             text = request.form['text']
             image = request.files['file']
             avatar_name = renamed_file(image.filename)
-            video_link = request.form["video_link"]
             if len(image.filename) != 0:
                 image.save(f"static/img/posts_img/{avatar_name}")
             else:
                 avatar_name = "book.jpg"
             try:
-                change_post(id, name, text, avatar_name, video_link)
+                change_post(id, name, text, avatar_name)
                 return render_template("success_post_update.html", name=table.name)
             except:
                 return "ОШИБКА ВЫПОЛНЕНИЯ ПРОГРАММЫ"
