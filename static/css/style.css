@@ -71,8 +71,7 @@ a {
 }
 
 .be_centered {
-  margin-top: auto;
-  margin-bottom: auto;
+  margin: 0 auto;
 }
 
 .logo_png {
@@ -97,7 +96,7 @@ ul, li {
   list-style: none;
 }
 
-header a, li, h1, h2, h3, h4, p {
+header a, header li, h1, h2, h3, h4, header p {
   font-family: 'Courier New', Courier, monospace;
 }
 

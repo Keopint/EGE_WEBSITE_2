@@ -18,13 +18,20 @@
             <hr>
             <ul class="nav nav-pills flex-column mb-auto">
                 {% for u in units %}
-                <li>
-                <a href="/course/{{course.id}}/{{u.id}}" class="nav-link link-body-emphasis">
-                  <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
-                  {{u.name}}
-                </a>
-              </li>
-              {% endfor %}
+                  <!-- <li>
+                    <a href="/course/{{course.id}}/{{u.id}}" class="nav-link link-body-emphasis">
+                      <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
+                      {{u.name}}
+                    </a>
+                  </li> -->
+                  <li>
+                    <a href="/course/{{course.id}}/{{u.id}}" class="uk-link-reset nav-link link-body-emphasis">
+                      <div class="uk-card uk-card-hover uk-card-large uk-margin uk-flex-center middle_backcolor" style="width: 100%">
+                        <p class="be_centered uk-text-large" style="text-decoration: none; text-align: center;">{{u.name}}</p>
+                      </div>
+                    </a>
+                  </li>
+                {% endfor %}
               <ul class="dropdown-menu text-small shadow">
                 <li><a class="dropdown-item" href="#">New project...</a></li>
                 <li><a class="dropdown-item" href="#">Settings</a></li>
