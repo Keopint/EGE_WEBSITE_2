@@ -566,7 +566,7 @@ def get_task(task_id):
     if task:
         return jsonify({
             "task_html" : f'''
-                <div class="task-item border rounded p-3 mb-3">
+                <div class="task-item border rounded p-3 mb-3 middle_backcolor">
                     <!-- Мета-данные задания -->
                     <div class="d-flex flex-wrap gap-3 bg-light border rounded p-3 mb-3">
                         <div class="d-flex align-items-center">
