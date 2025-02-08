@@ -11,7 +11,7 @@ class Class(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(Text, nullable=False)
     teacher_id = Column(Integer, nullable=False)
-    count_student = Column(Integer, nullable=False)
+    count_student = Column(Integer, nullable=False, default=0)
 
 # models.py
 class Post(Base):
@@ -104,6 +104,7 @@ class Student(UserMixin, Base):
     email = Column(String, nullable=False)
     class_number = Column(Integer, nullable=False)
     avatar = Column(String, nullable=False)
+    role = Column(String, nullable=False)
 
     @property
     def is_authenticated(self):

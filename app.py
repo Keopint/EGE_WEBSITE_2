@@ -75,7 +75,8 @@ def add_task(source: str, statement: str,  number: int, difficulty: int, answer:
         db.close()
 
 
-def add_student(name: str,  surname: str, patronymic: str, class_number: int, email: str, login: str, password: str, avatar: str):
+def add_student(name: str,  surname: str, patronymic: str, class_number: int, email: str, login: str, password: str,
+                avatar: str, role: str):
     db = SessionLocal()
     try:
         new_student = Student()
@@ -87,6 +88,7 @@ def add_student(name: str,  surname: str, patronymic: str, class_number: int, em
         new_student.login = login
         new_student.password = password
         new_student.avatar = avatar
+        new_student.role = role
         db.add(new_student)
         db.commit()
     finally:
@@ -352,7 +354,7 @@ def register_student():
             avatar.save(f"static/img/avatars/{filename}")
         else:
             filename = "base_avatar.png"
-        add_student(name, surname, patronymic, class_number, email, login, password, filename)
+        add_student(name, surname, patronymic, class_number, email, login, password, filename, "student")
         print("login", login_user(get_user_by_email(email)))
         return redirect(url_for("profile"))
     return render_template("register_student.html")
