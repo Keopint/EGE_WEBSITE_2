@@ -539,6 +539,12 @@ def add_pitch():
         return redirect("/")
     return render_template("add_pitch.html")
 
+
+@app.route("/teacher")
+def teacher_courses():
+    return render_template("teacher_courses.html")
+
+
 if __name__ == "__main__":
     app.jinja_env.auto_reload = True
     app.config['TEMPLATES_AUTO_RELOAD'] = True
