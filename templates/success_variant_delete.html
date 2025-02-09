@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}
+Главная страница
+{% endblock %}
+
+{% block script %}
+{% endblock %}
+
+{% block body %} 
+    <div class="text-center pt-5">
+        <h1>Вариант успешно удален!</h1>
+        <a class="btn btn-outline-dark" href="{{url_for('main_page')}}">На главную</a>
+        <a class="btn btn-outline-dark" href="{{url_for('variants')}}">К вариантам</a>
+    </div>
+{% endblock %}

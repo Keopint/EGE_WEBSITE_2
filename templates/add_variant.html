@@ -21,6 +21,7 @@
                 <label for="taskId" class="form-label">Введите ID задания, которое хотите добавить, и нажмите "Добавить задание":</label>
                 <input type="number" class="form-control" id="taskId" placeholder="Id задания">
                 <button type="button" class="btn btn-primary mt-2" onclick="fetchTask()">Добавить задание</button>
+                <button type="button" class="btn btn-primary mt-2" onclick="generateTasks()">Сгенерировать вариант</button>
             </div>
             <div id="taskList" class="mt-4">
                 <!-- Сюда будут добавляться задания -->
@@ -51,6 +52,29 @@
             .catch(error => console.error('Error:', error));
     }
 
+    function generateTasks() {
+    fetch(`/generate_tasks`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+            } else {
+                data.forEach(taskId => {
+                    fetch(`/get_task/${taskId}`)
+                        .then(response => response.json())
+                        .then(taskData => {
+                            if (taskData.error) {
+                                alert(taskData.error);
+                            } else {
+                                addTaskToPage(taskData, taskId);
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                });
+            }
+        })
+        .catch(error => console.error('Error:', error));
+}
     function addTaskToPage(task, taskId) {
         const taskList = document.getElementById('taskList');
         const taskElement = document.createElement('div');

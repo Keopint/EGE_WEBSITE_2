@@ -192,7 +192,7 @@ class Variant(Base):
     id = Column(Integer, primary_key=True)
     author = Column(Integer, ForeignKey('Student.id'))
     student = relationship("Student")
-    tasks = relationship('Task', secondary='variants_tasks', back_populates='variants')
+    tasks = relationship('Task', secondary='variants_tasks', back_populates='variants', order_by='Task.number')
 
 class VariantTask(Base):
     __tablename__ = 'variants_tasks'
