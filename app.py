@@ -39,7 +39,8 @@ create_database_if_not_exists()
 
 def add_render_arguments_decorator(func):
     def new_func(*args, **kwargs):
-        return func(*args, **kwargs, current_user=current_user)
+        no_header = request.args.get("no_header", "0") == "1"
+        return func(*args, **kwargs, current_user=current_user, no_header=no_header)
     return new_func
 
 render_template = add_render_arguments_decorator(render_template)
