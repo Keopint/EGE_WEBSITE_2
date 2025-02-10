@@ -19,6 +19,7 @@ from random import choices
 from string import ascii_letters
 from md_to_html import markdown_to_html
 from pdf2image import convert_from_path
+from db_functions import get_class_by_code, add_student_to_class
 
 
 if not os.path.exists("./presentations"):
@@ -344,7 +345,7 @@ def register_student():
         name = request.form["name"]
         surname = request.form["surname"]
         patronymic = request.form["patronymic"]
-        class_number = int(request.form["num_class"])
+        class_number = int(request.form["num_class"]) if request.form['num_class'] else 1
         email = request.form["email"]
         login = request.form["login"]
         password = request.form["password"]
@@ -354,7 +355,8 @@ def register_student():
             avatar.save(f"static/img/avatars/{filename}")
         else:
             filename = "base_avatar.png"
-        add_student(name, surname, patronymic, class_number, email, login, password, filename, "student")
+        role = 'teacher' if 'is_teacher' in request.form else 'student'
+        add_student(name, surname, patronymic, class_number, email, login, password, filename, role)
         print("login", login_user(get_user_by_email(email)))
         return redirect(url_for("profile"))
     return render_template("register_student.html")
@@ -543,6 +545,17 @@ def add_pitch():
 @app.route("/teacher")
 def teacher_courses():
     return render_template("teacher_courses.html")
+
+
+def join_class():
+    if request.method == 'POST':
+        code = request['code']
+        class_to_join = get_class_by_code(code)
+        if class_to_join:
+            add_student_to_class(current_user, class_to_join)
+            ...
+        else:
+            ...
 
 
 if __name__ == "__main__":

@@ -12,6 +12,7 @@ class Class(Base):
     name = Column(Text, nullable=False)
     teacher_id = Column(Integer, nullable=False)
     count_student = Column(Integer, nullable=False, default=0)
+    code = Column(String)
 
 # models.py
 class Post(Base):

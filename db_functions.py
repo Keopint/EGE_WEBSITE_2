@@ -27,7 +27,7 @@ def convert_params(*params):
 
                         obj = db.query(param_class).filter(and_(*filters)).first()
                         if not obj:
-                            return  # Объект не найден
+                            return
 
                         updates[param_name] = obj
 
@@ -66,7 +66,7 @@ def remove_student_from_class(student: Student | int, _class: Class | int) -> No
 @convert_params(('teacher', Student))
 def create_class(teacher: Student | int, name: str) -> None:
     with SessionLocal() as db:
-        new_class = Class(name=name, teacher_id=teacher.id)
+        new_class = Class(name=name, teacher_id=teacher.id, code=generate_unique_key())
         db.add(new_class)
         db.commit()
 
@@ -83,6 +83,15 @@ def delete_class(_class: Class | int) -> None:
 def get_all_students_of_class(_class: Class | int) -> list:
     with SessionLocal() as db:
         return db.query(class_student).filter(class_student.class_id == _class.id).all()
+
+
+def get_class_by_code(code: str) -> Class | None:
+    with SessionLocal() as db:
+        _class = db.query(Class).filter(Class.code == code)
+        if len(_class) == 1:
+            return _class.first()
+        else:
+            return None
 
 
 def generate_unique_key() -> str:
