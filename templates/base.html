@@ -29,7 +29,7 @@
   <header style="display: flex; width: 100vw; justify-content: center;">
     <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start header_back" style="width: 100%; height: 8vh;">
         <a href="{{url_for('main_page')}}" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none" style="margin-left: 10px; height: 100%; align-items: center;">
-          <img class="bi me-2 be_centered" src="../static/img/Logo.jpg" width="40" height="32" role="img" aria-label="aboba">
+          <img class="bi me-2 be_centered" src="{{url_for('static', filename='/img/Logo.jpg')}}" width="40" height="32" role="img" aria-label="aboba">
           <h3 style="color: white; margin-top: auto; margin-bottom: auto;">Hampters EGE</h3>
         </a>
 
@@ -37,7 +37,6 @@
           <!-- <li><a href="#" class="nav-link px-2 text-secondary">Home</a></li> -->
           <li style="margin-top: auto; margin-bottom: auto;"><a href="{{url_for('posts')}}" class="nav-link px-2 text-white be_centered" style="text-decoration: none; margin-top: auto; margin-bottom: auto;">Статьи</a></li>
           <li style="margin-top: auto; margin-bottom: auto;"><a href="{{url_for('cources')}}" class="nav-link px-2 text-white be_centered" style="text-decoration: none; margin-top: auto; margin-bottom: auto;">Курсы</a></li>
-          <li style="margin-top: auto; margin-bottom: auto;"><a href="{{url_for('course_add')}}" class="nav-link px-2 text-white be_centered" style="text-decoration: none; margin-top: auto; margin-bottom: auto;">Добавить курс</a></li>
           <li style="margin-top: auto; margin-bottom: auto;"><a href="{{url_for('tasks')}}" class="nav-link px-2 text-white be_centered" style="text-decoration: none; margin-top: auto; margin-bottom: auto;">Задания</a></li>
           <li style="margin-top: auto; margin-bottom: auto;"><a href="{{url_for('pitches')}}" class="nav-link px-2 text-white be_centered" style="text-decoration: none; margin-top: auto; margin-bottom: auto;">Презентации</a></li>
           <li style="margin-top: auto; margin-bottom: auto;"><a href="{{url_for('variants')}}" class="nav-link px-2 text-white be_centered" style="text-decoration: none; margin-top: auto; margin-bottom: auto;">Варианты</a></li>
@@ -50,7 +49,7 @@
 
             <!-- <a href="{{url_for('profile')}}"><button type="button" class="btn btn-outline-light me-2">Профиль</button></a> -->
             
-            <a class="uk-link-reset" href="{{url_for('profile')}}"><img class="be_centered" src="../static/img/avatars/{{current_user.avatar}}" width="30" height="30"></a>
+            <a class="uk-link-reset" href="{{url_for('profile')}}"><img class="be_centered" src="{{url_for('static', filename='img/avatars/'~ current_user.avatar)}}" width="30" height="30"></a>
             <a class="uk-link-reset be_centered" href="{{url_for('profile')}}"> <p class="be_centered">{{ current_user.name }}</p></a>
             <a href="/logout"><button type="button" class="btn btn-outline-light me-2">Выход</button></a>
           {% else %}

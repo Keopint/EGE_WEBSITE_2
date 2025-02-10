@@ -185,26 +185,27 @@
 
     function checkAllResponses() {
         const forms = document.querySelectorAll('form');
+        let correctCount = 0;
+        let incorrectCount = 0;
 
         if (forms.length === 0) {
-            alert("Формы не найдены!"); // Сообщение об ошибке
-            return; // Выход из функции, если формы не найдены
+            alert("Формы не найдены!");
+            return;
         }
 
         forms.forEach(form => {
-            const taskId = form.id.split('_')[1]; // Получаем номер задачи
+            const taskId = form.id.split('_')[1];
             const userResponse = document.getElementById(`userResponse_${taskId}`);
             const resultDiv = document.getElementById(`result_${taskId}`);
             const taskAnswer = form.getAttribute('data-answer');
 
             if (!userResponse || !resultDiv) {
-                console.error(`Элементы для задачи №${taskId} не найдены!`); // Сообщение об ошибке
-                return; // Выход из цикла, если элементы не найдены
+                console.error(`Элементы для задачи №${taskId} не найдены!`);
+                return;
             }
 
             console.log(`Задача №${taskId} - Пользовательский ответ: ${userResponse.value}, Правильный ответ: ${taskAnswer}`);
 
-            // Отправка данных на сервер
             fetch('/check_answer', {
                 method: 'POST',
                 headers: {
@@ -220,11 +221,15 @@
             .then(data => {
                 if (data.status === "success") {
                     if (userResponse.value.trim().toLowerCase() === taskAnswer.toLowerCase()) {
-                        resultDiv.innerHTML = '<i class="bi bi-check-circle-fill text-success"></i> Верно!';
+                        resultDiv.innerText = "Ответ верный!";
+                        resultDiv.style.color = "green";
                         userResponse.style.backgroundColor = "lightgreen";
+                        correctCount++; // Увеличиваем счетчик правильных ответов
                     } else {
-                        resultDiv.innerHTML = '<i class="bi bi-x-circle-fill text-danger"></i> Неверно!';
+                        resultDiv.innerText = "Ответ неверный. Попробуйте еще раз.";
+                        resultDiv.style.color = "red";
                         userResponse.style.backgroundColor = "lightcoral";
+                        incorrectCount++; // Увеличиваем счетчик неправильных ответов
                     }
                 }
             })

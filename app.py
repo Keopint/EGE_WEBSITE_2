@@ -743,6 +743,8 @@ def course_page(id, uid):
 
 @app.route("/teacher")
 def teacher_courses():
+    if current_user.is_anonymous:
+        return redirect(url_for('login_form'))
     return render_template("teacher_courses.html")
 
 

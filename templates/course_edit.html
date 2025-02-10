@@ -1,5 +1,13 @@
-{% extends "base.html" %} {% block title %} Главная страница {% endblock %} {%
-block script %} {% endblock %} {% block body %}
+{% extends "base.html" %} 
+
+{% block title %} 
+Главная страница 
+{% endblock %} 
+
+{% block script %} 
+{% endblock %} 
+
+{% block body %}
 <!-- Миша помилуй и прости -->
 <style>
   .unit {
@@ -29,7 +37,7 @@ block script %} {% endblock %} {% block body %}
     </div>
     {% endfor %}
   </div>
-  <button onclick="update_cource()">Обновить курс!</button>
+  <button onclick="update_cource()">Обновить курс!</button> 
 </div>
 <script>
   course_id = "{{course_id}}";
