@@ -387,7 +387,7 @@ def register_student():
         name = request.form["name"]
         surname = request.form["surname"]
         patronymic = request.form["patronymic"]
-        class_number = int(request.form["num_class"])
+        class_number = int(request.form["num_class"]) if request.form["num_class"] else 1
         email = request.form["email"]
         login = request.form["login"]
         password = request.form["password"]

@@ -16,7 +16,7 @@
         <h1 align="center">Регистрация</h1>
 
         <div class="form-check form-switch">
-          <input class="form-check-input" type="checkbox" id="is_teacher">
+          <input class="form-check-input" type="checkbox" id="is_teacher" name="is_teacher" value="on">
           <label class="form-check-label" for="is_teacher">Учитель</label>
         </div>
 
@@ -25,10 +25,19 @@
             const teacherSwitch = document.getElementById('is_teacher');
             const subjectStudent = document.getElementById('subject-student');
             const classStudent = document.getElementById('class-student');
+            const numClassInput = document.getElementById('num_class');
+            const whyAreWeTextarea = document.getElementById('whyAreWe');
 
             teacherSwitch.addEventListener('change', function() {
-                subjectStudent.classList.toggle('d-none', this.checked);
-                classStudent.classList.toggle('d-none', this.checked);
+                const isTeacher = this.checked;
+
+                // Скрываем/показываем поля
+                subjectStudent.classList.toggle('d-none', isTeacher);
+                classStudent.classList.toggle('d-none', isTeacher);
+
+                // Управляем атрибутом required
+                numClassInput.required = !isTeacher;
+                whyAreWeTextarea.required = !isTeacher;
             });
         });
         </script>
