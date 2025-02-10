@@ -31,7 +31,7 @@ def get_type_statistics(user_id: int) -> dict:
         if task.number not in numbers:
             numbers[task.number] = {'number': 0, 'correct': 0}
         numbers[task.number]['number'] += 1
-        numbers[task.number]['correct'] += (1 if submit.user_response == task.answer else 0)
+        numbers[task.number]['correct'] += (1 if str(submit.user_response) == str(task.answer) else 0)
 
     return numbers
 

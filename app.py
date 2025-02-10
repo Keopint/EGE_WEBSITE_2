@@ -3,7 +3,7 @@ from flask import (Flask, render_template, request, redirect,
                    render_template_string)
 from flask_login import current_user, login_user, logout_user
 import os
-from sqlalchemy import and_, select, asc, desc
+from sqlalchemy import and_, select, asc, desc, func
 from sqlalchemy.orm import Session, joinedload
 from database import SessionLocal
 from models import (Student, Task, login_manager, Post,
@@ -39,13 +39,14 @@ create_database_if_not_exists()
 
 def add_render_arguments_decorator(func):
     def new_func(*args, **kwargs):
-        return func(*args, **kwargs, current_user=current_user)
+        no_header = request.args.get("no_header", "0") == "1"
+        return func(*args, **kwargs, current_user=current_user, no_header=no_header)
     return new_func
 
 render_template = add_render_arguments_decorator(render_template)
 # сделал подставление current_user в render templates
 
-def add_task(source: str, statement: str,  number: int, difficulty: int, answer: int, file_name: str, tags, solution: str = "NO"):
+def add_task(source: str, statement: str,  number: int, difficulty: int, answer: str, file_name: str, tags, solution: str = "NO"):
     db = SessionLocal()
     try:
         new_task = Task(
@@ -77,7 +78,8 @@ def add_task(source: str, statement: str,  number: int, difficulty: int, answer:
         db.close()
 
 
-def add_student(name: str,  surname: str, patronymic: str, class_number: int, email: str, login: str, password: str, avatar: str):
+def add_student(name: str,  surname: str, patronymic: str, class_number: int, email: str, login: str, password: str,
+                avatar: str, role: str):
     db = SessionLocal()
     try:
         new_student = Student()
@@ -89,6 +91,7 @@ def add_student(name: str,  surname: str, patronymic: str, class_number: int, em
         new_student.login = login
         new_student.password = password
         new_student.avatar = avatar
+        new_student.role = role
         db.add(new_student)
         db.commit()
     finally:
@@ -202,6 +205,20 @@ def get_task_by_id(id):
         db.close()
     return task
 
+def get_random_task_by_kim(kim_num):
+    db = SessionLocal()
+    try:
+        # Используем joinedload для подгрузки связанного студента (автора)
+        task = db.query(Task)\
+                .options(joinedload(Task.student))\
+                .options(joinedload(Task.tags))\
+                .filter(Task.number == kim_num)\
+                .order_by(func.random())\
+                .first()
+    finally:
+        db.close()
+    return task
+
 def get_name_by_id(id):
     db = SessionLocal()
     try:
@@ -236,6 +253,16 @@ def delete_post(id):
             for mes in messages:
                 db.delete(mes)
             db.delete(post)
+            db.commit()
+        finally:
+            db.close()
+
+def delete_variant(id):
+    db = SessionLocal()
+    variant = db.query(Variant).get(id)
+    if variant:
+        try:
+            db.delete(variant)
             db.commit()
         finally:
             db.close()
@@ -277,10 +304,10 @@ def main_page():
 @app.route("/tasks", methods=['GET', 'POST'])    
 def tasks():
     number_array = list(range(1, 28))
-    difficulty_names = ["Легкая", "Нормальная", "Сложная"]
-    difficulty = list(range(0, 3))
-    checkbox_task_checked = [True] * 28
-    checkbox_difficulty_checked = [True] * 3
+    difficulty_names = ["Базовая", "Легкая", "Нормальная", "Сложная", "Хардкор"]
+    difficulty = list(range(0, len(difficulty_names)))
+    checkbox_task_checked = [True] * (len(number_array) + 1)
+    checkbox_difficulty_checked = [True] * len(difficulty_names)
     tags = []
     if request.method == "POST":
         number_array.clear()
@@ -296,7 +323,7 @@ def tasks():
                 number_array.append(i)
             else:
                 checkbox_task_checked[i] = False
-        for i in range(3):
+        for i in range(len(difficulty_names)):
             if f"difficulty_{i}" in request.form:
                 difficulty.append(i)
             else:
@@ -326,7 +353,7 @@ def add_task_form():
         statement = str(request.form["statement"]).replace('\n', '<br>')
         number = int(request.form["number"])
         difficulty = int(request.form.get("select_difficulty"))
-        answer = int(request.form["answer"])
+        answer = request.form["answer"]
         solution = request.form["solution"]
         f = request.files['file']
         filename = renamed_file(f.filename)
@@ -360,7 +387,7 @@ def register_student():
         name = request.form["name"]
         surname = request.form["surname"]
         patronymic = request.form["patronymic"]
-        class_number = int(request.form["num_class"])
+        class_number = int(request.form["num_class"]) if request.form["num_class"] else 1
         email = request.form["email"]
         login = request.form["login"]
         password = request.form["password"]
@@ -370,8 +397,10 @@ def register_student():
             avatar.save(f"static/img/avatars/{filename}")
         else:
             filename = "base_avatar.png"
-        add_student(name, surname, patronymic, class_number, email, login, password, filename)
-        return redirect(url_for("main_page"))
+        role = 'teacher' if 'is_teacher' in request.form else 'student'
+        add_student(name, surname, patronymic, class_number, email, login, password, filename, role)
+        print("login", login_user(get_user_by_email(email)))
+        return redirect(url_for("profile"))
     return render_template("register_student.html")
 
 @app.route("/login_form", methods=['GET', 'POST'])
@@ -410,7 +439,7 @@ def profile(id=None):
 def check_answer():
     data = request.json
     task_id = data.get('task_id')
-    user_response = int(data.get('user_response'))
+    user_response = data.get('user_response')
     task_answer = data.get('task_answer')
 
     try:
@@ -554,6 +583,15 @@ def add_pitch():
         return redirect(url_for('login_form'))
     return render_template("add_pitch.html")
 
+@app.route('/generate_tasks', methods=['GET'])
+def generate_tasks():
+    tasks = []
+    for kim_num in range(1, 28):
+        task = get_random_task_by_kim(kim_num)
+        if task:
+            tasks.append(task.id)
+    return jsonify(tasks)
+
 @app.route('/get_task/<int:task_id>', methods=['GET'])
 def get_task(task_id):
     task = get_task_by_id(task_id)
@@ -562,36 +600,39 @@ def get_task(task_id):
     if len(tags) > 0:
         tags = '#' + tags
     if task:
-        return jsonify({
-            "task_html" : f'''
-                <div class="task-item border rounded p-3 mb-3 middle_backcolor">
-                    <!-- Мета-данные задания -->
-                    <div class="d-flex flex-wrap gap-3 bg-light border rounded p-3 mb-3">
-                        <div class="d-flex align-items-center">
-                            <span class="fw-bold text-secondary me-1">Id:</span>
-                            <span>{ task.id }</span>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <span class="fw-bold text-secondary me-1">Источник:</span>
-                            <span>{ task.source }</span>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <span class="fw-bold text-secondary me-1">№ КИМ:</span>
-                            <span>{ task.number }</span>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <span class="fw-bold text-secondary me-1">Сложность:</span>
-                            <span>
-                                { difficulty_names[task.difficulty]}
-                            </span>
-                        </div>
-                    </div> 
-                    <p class="mt-2">{ task.statement}</p>
-                    <p>
-                        {tags}
-                    </p>
-                '''
-        })
+        # Генерируем HTML с помощью Jinja2
+        task_html = render_template_string('''
+            <div class="task-item border rounded p-3 mb-3 middle_backcolor">
+                <!-- Мета-данные задания -->
+                <div class="d-flex flex-wrap gap-3 bg-light border rounded p-3 mb-3">
+                    <div class="d-flex align-items-center">
+                        <span class="fw-bold text-secondary me-1">Id:</span>
+                        <span>{{ task.id }}</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <span class="fw-bold text-secondary me-1">Источник:</span>
+                        <span>{{ task.source }}</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <span class="fw-bold text-secondary me-1">№ КИМ:</span>
+                        <span>{{ task.number }}</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <span class="fw-bold text-secondary me-1">Сложность:</span>
+                        <span>{{ difficulty_names[task.difficulty] }}</span>
+                    </div>
+                </div> 
+                <p class="mt-2">{{ task.statement|safe }}</p>
+                {% if task.file_name is none %}
+                {% elif task.file_name[-3:] == "png" or task.file_name[-3:] == "jpg" %}
+                    <img src="/static/img/{{ task.file_name }}" class="img-fluid m-2" alt="..." width="40%">
+                {% elif task.file_name[-3:] == "txt" or task.file_name[-4:] == "xlsx" %}
+                    <a href="/static/img/{{ task.file_name }}" style="color:black" download>Скачать файл</a>
+                {% endif %}
+                <p>{{ tags }}</p>
+            </div>
+        ''', task=task, difficulty_names=difficulty_names, tags=tags)
+        return jsonify({"task_html": task_html})
     return jsonify({'error': 'Task not found'}), 404
 
 @app.route("/add_variant", methods=["GET", "POST"])
@@ -603,7 +644,6 @@ def add_variant():
             task_ids_json = request.form.get('task_ids')
             if task_ids_json:
                 task_ids = json.loads(task_ids_json)  # Преобразуем JSON-строку обратно в массив
-                
                 print("Получены ID заданий:", task_ids) 
                 new_variant = Variant(author=current_user.id)  # Создаем новый вариант
                 for task_id in task_ids:
@@ -621,18 +661,23 @@ def add_variant():
 
 @app.route("/watch_variant/<int:id>", methods=["GET", "POST"])
 def watch_variant(id):
-    if current_user.is_anonymous:
-        return redirect(url_for('login_form'))
-    variant = get_variant_by_id(id)
-    return render_template("watch_variant.html", variant=variant)
+    variant: Variant = get_variant_by_id(id)
+    is_author = False
+    if (not current_user.is_anonymous) and current_user.id == variant.author:
+        is_author = True
+    difficulty_names = ["Легкая", "Нормальная", "Сложная"]
+    return render_template("watch_variant.html", variant=variant, is_author=is_author, difficulty_names=difficulty_names)
 
 @app.route("/variants", methods=["GET", "POST"])
 def variants():
-    if current_user.is_anonymous:
-        return redirect(url_for('login_form'))
     with SessionLocal() as db:
         variants = db.query(Variant).order_by(Variant.id).options(joinedload(Variant.student)).all()
     return render_template("variants.html", variants=variants)
+
+@app.route("/watch_variant/<int:id>/delete")
+def variant_delete(id):
+    delete_variant(id)
+    return render_template("success_variant_delete.html")
 
 @app.route("/course/add", methods=["GET", "POST"])
 def course_add():
@@ -694,6 +739,12 @@ def course_page(id, uid):
         units = course.units
         target_unit = db.query(Unit).get(uid)
         return render_template("course.html", target_unit=target_unit, course=course, units=units)
+
+
+@app.route("/teacher")
+def teacher_courses():
+    return render_template("teacher_courses.html")
+
 
 if __name__ == "__main__":
     app.jinja_env.auto_reload = True        

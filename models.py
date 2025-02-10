@@ -11,7 +11,8 @@ class Class(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(Text, nullable=False)
     teacher_id = Column(Integer, nullable=False)
-    count_student = Column(Integer, nullable=False)
+    count_student = Column(Integer, nullable=False, default=0)
+    code = Column(String)
 
 class Course(Base):
     __tablename__ = 'Course'
@@ -123,6 +124,7 @@ class Student(UserMixin, Base):
     email = Column(String, nullable=False)
     class_number = Column(Integer, nullable=False)
     avatar = Column(String, nullable=False)
+    role = Column(String, nullable=False)
 
     @property
     def is_authenticated(self):
@@ -168,7 +170,7 @@ class Task(Base):
     source = Column(Text, nullable=False)
     statement = Column(Text, nullable=False)
     number = Column(Integer, nullable=False)
-    answer = Column(Integer, nullable=False)
+    answer = Column(Text, nullable=False)
     solution = Column(Text, nullable=False)
     difficulty = Column(Integer, nullable=False)
     file_name = Column(String)
@@ -192,7 +194,7 @@ class Variant(Base):
     id = Column(Integer, primary_key=True)
     author = Column(Integer, ForeignKey('Student.id'))
     student = relationship("Student")
-    tasks = relationship('Task', secondary='variants_tasks', back_populates='variants')
+    tasks = relationship('Task', secondary='variants_tasks', back_populates='variants', order_by='Task.number')
 
 class VariantTask(Base):
     __tablename__ = 'variants_tasks'

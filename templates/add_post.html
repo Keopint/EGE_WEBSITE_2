@@ -10,7 +10,11 @@
         <p align="center">
             <input type="text" name="name" id="name" class="form-control" value="" style="height: 100%; width: 40%; font-size: 250%; text-align: center; font-weight: bold;" placeholder="Название статьи" required>
         </p><br>
-        <textarea name="text" id="text" class='form-control textareaElement mb-2'></textarea>
+        <textarea name="text" id="text" class='form-control textareaElement'></textarea>
+        
+        <label class="pt-2">Добавить видео в статью(ссылка)</label>
+        <input type="text" class="form-control mb-3" id="video_link" name="video_link" style="width:30%;">
+        <label class="pt-2">Аватарка статьи</label>
         <input type="file" name="file" id="file" class="form-control" style="width: 22%"><br>
         <input id="send_post" type="submit" name="send_post" class="btn btn-success mb-3" value="Запостить статью"> 
     </form>
