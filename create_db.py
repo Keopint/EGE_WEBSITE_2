@@ -5,7 +5,10 @@ from os.path import exists
 
 def add_start_student():
     db = SessionLocal()
-    new_student = Student(name="Alice", surname="Aboba", patronymic = "SUS", class_number=10, password=123, login="KOTYA", email="a@gmail.com", avatar="base_avatar.png")
+    new_student = Student(name="Alice", surname="Aboba", patronymic = "SUS", class_number=10, password=123, login="KOTYA", email="a@gmail.com", avatar="base_avatar.png", role="student")
+    db.add(new_student)
+    db.commit()
+    new_student = Student(name="Patric", surname="Cobalev", patronymic = "Vigaev", class_number=11, password=456, login="Cobalt", email="c@gmail.com", avatar="base_avatar.png", role="teacher")
     db.add(new_student)
     db.commit()
     db.close()
