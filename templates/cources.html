@@ -12,7 +12,7 @@
     {% endif %}
     {% for table in tables %}
         <div class="alert alert-info">
-            <h1 style="color: #000;">{{table.name}}<img align="right" height="12%" width="13%" src="static/img/avatars/{{table.avatar_name}}"></h1> 
+            <h1 style="color: #000;">{{table.name}}<img align="right" height="12%" width="13%" src="../static/img/avatars/{{table.avatar_name}}"></h1> 
             <p style="color:#000"><a href="course/{{table['id']}}" class="btn btn-info">Подробнее</a>  Дата: {{table.date}}</p>
         </div>
     {% endfor %}
