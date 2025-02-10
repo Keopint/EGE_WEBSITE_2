@@ -94,6 +94,7 @@ async function update_cource() {
           },
           body: JSON.stringify(data),
       });
+      window.location.href = '/course/' + course_id;
       if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
       }
