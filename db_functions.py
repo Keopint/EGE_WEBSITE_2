@@ -66,7 +66,7 @@ def remove_student_from_class(student: Student | int, _class: Class | int) -> No
 @convert_params(('teacher', Student))
 def create_class(teacher: Student | int, name: str) -> None:
     with SessionLocal() as db:
-        new_class = Class(name=name, teacher_id=teacher.id)
+        new_class = Class(name=name, teacher_id=teacher.id, code=generate_unique_key())
         db.add(new_class)
         db.commit()
 
