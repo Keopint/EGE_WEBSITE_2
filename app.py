@@ -387,7 +387,7 @@ def register_student():
         name = request.form["name"]
         surname = request.form["surname"]
         patronymic = request.form["patronymic"]
-        class_number = int(request.form["num_class"])
+        class_number = int(request.form["num_class"]) if request.form["num_class"] else 1
         email = request.form["email"]
         login = request.form["login"]
         password = request.form["password"]
@@ -397,7 +397,8 @@ def register_student():
             avatar.save(f"static/img/avatars/{filename}")
         else:
             filename = "base_avatar.png"
-        add_student(name, surname, patronymic, class_number, email, login, password, filename, "student")
+        role = 'teacher' if 'is_teacher' in request.form else 'student'
+        add_student(name, surname, patronymic, class_number, email, login, password, filename, role)
         print("login", login_user(get_user_by_email(email)))
         return redirect(url_for("profile"))
     return render_template("register_student.html")
