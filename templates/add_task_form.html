@@ -46,12 +46,14 @@
             <div class="row mx-auto">
                 <input type="text" name="source" id="source" class="form-control me-2" style="width: 14%;" placeholder="Источник" required/>
                 <input name="number" id="number" placeholder="Номер(КИМ)" min="1" max="27" type="number" id="typeNumber" class="form-control" style="width: 19%;" required/> 
-                <input name="answer" id="answer" class="ms-2" type="number" placeholder="Ответ" style="width: 15%;" required/>
+                <input name="answer" id="answer" class="ms-2" type="text" placeholder="Ответ" style="width: 15%;" required/>
                 <select name="select_difficulty" id="select_difficulty" class="form-select ms-2" aria-label="Default select example" style="width: 18%;" required>
                     <option selected disabled value="">Cложность</option >
-                    <option value="0">Легкая</option>
-                    <option value="1">Нормальная</option>
-                    <option value="2">Сложная</option>  
+                    <option value="0">Базовая</option>
+                    <option value="1">Легкая</option>
+                    <option value="2">Нормальная</option>
+                    <option value="3">Сложная</option>
+                    <option value="4">Хардкор</option>
                 </select>
                 <input type="file" name="file" id="file" class="form-control ms-2" style="width: 29%"/>
             </div>

@@ -46,7 +46,7 @@ def add_render_arguments_decorator(func):
 render_template = add_render_arguments_decorator(render_template)
 # сделал подставление current_user в render templates
 
-def add_task(source: str, statement: str,  number: int, difficulty: int, answer: int, file_name: str, tags, solution: str = "NO"):
+def add_task(source: str, statement: str,  number: int, difficulty: int, answer: str, file_name: str, tags, solution: str = "NO"):
     db = SessionLocal()
     try:
         new_task = Task(
@@ -78,7 +78,8 @@ def add_task(source: str, statement: str,  number: int, difficulty: int, answer:
         db.close()
 
 
-def add_student(name: str,  surname: str, patronymic: str, class_number: int, email: str, login: str, password: str, avatar: str):
+def add_student(name: str,  surname: str, patronymic: str, class_number: int, email: str, login: str, password: str,
+                avatar: str, role: str):
     db = SessionLocal()
     try:
         new_student = Student()
@@ -90,6 +91,7 @@ def add_student(name: str,  surname: str, patronymic: str, class_number: int, em
         new_student.login = login
         new_student.password = password
         new_student.avatar = avatar
+        new_student.role = role
         db.add(new_student)
         db.commit()
     finally:
@@ -302,10 +304,10 @@ def main_page():
 @app.route("/tasks", methods=['GET', 'POST'])    
 def tasks():
     number_array = list(range(1, 28))
-    difficulty_names = ["Легкая", "Нормальная", "Сложная"]
-    difficulty = list(range(0, 3))
-    checkbox_task_checked = [True] * 28
-    checkbox_difficulty_checked = [True] * 3
+    difficulty_names = ["Базовая", "Легкая", "Нормальная", "Сложная", "Хардкор"]
+    difficulty = list(range(0, len(difficulty_names)))
+    checkbox_task_checked = [True] * (len(number_array) + 1)
+    checkbox_difficulty_checked = [True] * len(difficulty_names)
     tags = []
     if request.method == "POST":
         number_array.clear()
@@ -321,7 +323,7 @@ def tasks():
                 number_array.append(i)
             else:
                 checkbox_task_checked[i] = False
-        for i in range(3):
+        for i in range(len(difficulty_names)):
             if f"difficulty_{i}" in request.form:
                 difficulty.append(i)
             else:
@@ -351,7 +353,7 @@ def add_task_form():
         statement = str(request.form["statement"]).replace('\n', '<br>')
         number = int(request.form["number"])
         difficulty = int(request.form.get("select_difficulty"))
-        answer = int(request.form["answer"])
+        answer = request.form["answer"]
         solution = request.form["solution"]
         f = request.files['file']
         filename = renamed_file(f.filename)
@@ -395,8 +397,9 @@ def register_student():
             avatar.save(f"static/img/avatars/{filename}")
         else:
             filename = "base_avatar.png"
-        add_student(name, surname, patronymic, class_number, email, login, password, filename)
-        return redirect(url_for("main_page"))
+        add_student(name, surname, patronymic, class_number, email, login, password, filename, "student")
+        print("login", login_user(get_user_by_email(email)))
+        return redirect(url_for("profile"))
     return render_template("register_student.html")
 
 @app.route("/login_form", methods=['GET', 'POST'])
@@ -435,7 +438,7 @@ def profile(id=None):
 def check_answer():
     data = request.json
     task_id = data.get('task_id')
-    user_response = int(data.get('user_response'))
+    user_response = data.get('user_response')
     task_answer = data.get('task_answer')
 
     try:
