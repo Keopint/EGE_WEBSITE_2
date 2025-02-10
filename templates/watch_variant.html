@@ -94,10 +94,10 @@
             if (data.status === "success") {
                 if (userResponse.trim().toLowerCase() === taskAnswer.toLowerCase()) {
                     resultDiv.innerHTML = '<i class="bi bi-check-circle-fill text-success"></i> Верно!';
-                    inputField.style.backgroundColor = "#e6ffe6";
+                    inputField.style.backgroundColor = "lightgreen";
                 } else {
                     resultDiv.innerHTML = '<i class="bi bi-x-circle-fill text-danger"></i> Неверно!';
-                    inputField.style.backgroundColor = "#ffe6e6";
+                    inputField.style.backgroundColor = "lightcoral";
                 }
             }
         })
@@ -147,12 +147,10 @@
             .then(data => {
                 if (data.status === "success") {
                     if (userResponse.value.trim().toLowerCase() === taskAnswer.toLowerCase()) {
-                        resultDiv.innerText = "Ответ верный!";
-                        resultDiv.style.color = "green";
+                        resultDiv.innerHTML = '<i class="bi bi-check-circle-fill text-success"></i> Верно!';
                         userResponse.style.backgroundColor = "lightgreen";
                     } else {
-                        resultDiv.innerText = "Ответ неверный. Попробуйте еще раз.";
-                        resultDiv.style.color = "red";
+                        resultDiv.innerHTML = '<i class="bi bi-x-circle-fill text-danger"></i> Неверно!';
                         userResponse.style.backgroundColor = "lightcoral";
                     }
                 }
@@ -171,21 +169,6 @@
         document.body.appendChild(link);
         link.click(); // Программно кликаем по ссылке
         document.body.removeChild(link); // Удаляем ссылку из документа
-    }
-
-    function checkAllCheckboxes() {
-    const checkboxes = document.querySelectorAll('input[name^="checkbox_task_"]');
-    checkboxes.forEach(checkbox => {
-        checkbox.checked = true;
-    });
-}
-
-    // Функция для сброса всех чекбоксов с именем, начинающимся на "checkbox_task_"
-    function uncheckAllCheckboxes() {
-        const checkboxes = document.querySelectorAll('input[name^="checkbox_task_"]');
-        checkboxes.forEach(checkbox => {
-            checkbox.checked = false;
-        });
     }
 </script>
 {% endblock %}
